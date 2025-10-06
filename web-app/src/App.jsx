@@ -1,16 +1,18 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import AppRouter from './routes/AppRouter.jsx'
+import Navbar from './components/layout/Navbar.jsx'
 
-
-export default function App() {
+function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
-      <h1 className="text-4xl font-bold text-blue-400">Tailwind v3 is working 🚀</h1>
+    <div className="min-h-screen bg-blue-50 text-gray-800">
+      <Navbar />
+      <main className="p-6">
+        <AppRouter />
+      </main>
     </div>
-  );
+  )
 }
 
+export default App
 
 
 
