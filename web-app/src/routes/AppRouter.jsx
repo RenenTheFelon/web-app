@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import Home from '../pages/Home/Home.jsx'
 import Learn from '../pages/Learn/Learn.jsx'
 import Products from '../pages/Products/Products.jsx'
+import Watchlist from '../pages/Products/Watchlist.jsx'
 import PersonalFinance from '../pages/PersonalFinance/PersonalFinance.jsx'
 
 const AppRouter = () => {
