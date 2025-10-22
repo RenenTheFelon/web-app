@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Link, NavLink } from "react-router-dom"
+import { NavLink } from "react-router-dom"
 
 const Sidebar = () => {
   const [openMenu, setOpenMenu] = useState("")
@@ -20,7 +20,9 @@ const Sidebar = () => {
       </div>
       <nav className="p-4 space-y-2 text-gray-700">
         {/* Home */}
-        <NavLink to="/" className={linkClass}>Home</NavLink>
+        <NavLink to="/" className={linkClass}>
+          Home
+        </NavLink>
 
         {/* Learn */}
         <div>
@@ -32,8 +34,9 @@ const Sidebar = () => {
           </button>
           {openMenu === "learn" && (
             <div className="ml-4 space-y-1">
-              <NavLink to="/learn" className={linkClass}>Overview</NavLink>
-              {/* add more Learn subpages later */}
+              <NavLink to="/learn" className={linkClass}>
+                Overview
+              </NavLink>
             </div>
           )}
         </div>
@@ -48,8 +51,12 @@ const Sidebar = () => {
           </button>
           {openMenu === "products" && (
             <div className="ml-4 space-y-1">
-              <NavLink to="/products" end className={linkClass}>Overview</NavLink>
-              <NavLink to="/products/watchlist" className={linkClass}>Watchlist</NavLink>
+              <NavLink to="/products/watchlist" className={linkClass}>
+                Watchlist
+              </NavLink>
+              <NavLink to="/products/charts" className={linkClass}>
+                Charts
+              </NavLink>
             </div>
           )}
         </div>
@@ -64,8 +71,9 @@ const Sidebar = () => {
           </button>
           {openMenu === "finance" && (
             <div className="ml-4 space-y-1">
-              <NavLink to="/personal-finance" className={linkClass}>Overview</NavLink>
-              {/* add finance subpages later */}
+              <NavLink to="/personal-finance" className={linkClass}>
+                Overview
+              </NavLink>
             </div>
           )}
         </div>

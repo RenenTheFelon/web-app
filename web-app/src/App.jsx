@@ -4,8 +4,9 @@ import MainLayout from './layouts/MainLayout.jsx'
 
 function App() {
   return (
-  
-        <MainLayout />
+    <MainLayout>
+      <AppRouter />
+    </MainLayout>
   )
 }
 
