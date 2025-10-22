@@ -16,7 +16,7 @@ const Sidebar = () => {
   return (
     <aside className="w-64 min-h-screen bg-white border-r shadow-sm">
       <div className="p-4 border-b">
-        <h1 className="text-xl font-bold text-blue-700">WealthWise</h1>
+        <h1 className="text-xl font-bold text-blue-700">RenenSomesh</h1>
       </div>
       <nav className="p-4 space-y-2 text-gray-700">
         {/* Home */}
