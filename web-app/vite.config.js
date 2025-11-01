@@ -5,10 +5,19 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: '0.0.0.0',
+    host: true, // allows Vite to be accessed externally (like Replit)
     port: 5000,
+    allowedHosts: [
+      '.replit.dev', // allow all Replit preview hosts
+    ],
     hmr: {
       clientPort: 5000,
+    },
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
     },
   },
 })
