@@ -217,7 +217,10 @@ For migrating to your VPS:
   - Integrated frontend with backend via Axios
   - Set up workflows for both frontend and backend
   - Configured database connection and CORS
+  - Fixed API routing: Changed from hardcoded localhost to relative `/api` path
+  - Configured Vite proxy to route `/api` requests to backend on port 8080
   - Created demo user (id=1, username='demo_user')
+  - **Status**: ✅ Both frontend and backend running successfully with full integration
 
 ## Testing
 - **Demo User**: A test user (ID: 1, username: 'demo_user') is pre-created
