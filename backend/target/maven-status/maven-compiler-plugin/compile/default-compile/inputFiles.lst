@@ -3,6 +3,7 @@
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/controller/UserController.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/exception/GlobalExceptionHandler.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/dto/NetWorthDto.java
+/home/runner/workspace/backend/src/main/java/com/wealthwise/finance/entity/Category.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/repository/ExpenseRepository.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/service/UserService.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/dto/IncomeDto.java
@@ -26,8 +27,12 @@
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/repository/NetWorthRepository.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/repository/UserRepository.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/FinanceApplication.java
+/home/runner/workspace/backend/src/main/java/com/wealthwise/finance/dto/CategoryDto.java
+/home/runner/workspace/backend/src/main/java/com/wealthwise/finance/service/CategoryService.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/controller/NetWorthController.java
+/home/runner/workspace/backend/src/main/java/com/wealthwise/finance/repository/CategoryRepository.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/service/GoalService.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/entity/Expense.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/repository/BudgetRepository.java
+/home/runner/workspace/backend/src/main/java/com/wealthwise/finance/controller/CategoryController.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/config/CorsConfig.java

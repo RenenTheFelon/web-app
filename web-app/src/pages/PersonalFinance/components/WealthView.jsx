@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { incomeAPI, expenseAPI } from '../../../services/api';
 
-const BudgetCalendar = ({ userId = 1 }) => {
+const WealthView = ({ userId = 1, onAddIncome, onAddExpense }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,8 +34,18 @@ const BudgetCalendar = ({ userId = 1 }) => {
       const expenseData = expenseRes.data || [];
 
       const allTransactions = [
-        ...incomeData.map(item => ({ ...item, type: 'income' })),
-        ...expenseData.map(item => ({ ...item, type: 'expense' }))
+        ...incomeData.map(item => ({ 
+          ...item, 
+          type: 'income',
+          date: item.incomeDate || item.date
+        })),
+        ...expenseData.map(item => ({ 
+          ...item, 
+          type: 'expense',
+          date: item.expenseDate || item.date,
+          name: item.name,
+          category: item.category
+        }))
       ].sort((a, b) => new Date(a.date) - new Date(b.date));
 
       setTransactions(allTransactions);
@@ -105,7 +115,7 @@ const BudgetCalendar = ({ userId = 1 }) => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-2xl font-bold text-gray-800">{monthName}</h3>
+        <h3 className="text-2xl font-bold text-gray-800">WealthView - {monthName}</h3>
         <div className="flex gap-2">
           <button
             onClick={previousMonth}
@@ -123,15 +133,27 @@ const BudgetCalendar = ({ userId = 1 }) => {
       </div>
 
       <div className="grid grid-cols-3 gap-4">
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <p className="text-sm text-green-600 font-medium">Total Income</p>
+        <button
+          onClick={onAddIncome}
+          className="bg-green-50 border-2 border-green-200 rounded-lg p-4 hover:bg-green-100 hover:border-green-300 transition-all cursor-pointer text-left"
+        >
+          <p className="text-sm text-green-600 font-medium flex items-center gap-2">
+            <span className="text-xl">➕</span> Total Income (Click to Add)
+          </p>
           <p className="text-2xl font-bold text-green-700">${monthlyTotals.income.toFixed(2)}</p>
-        </div>
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-sm text-red-600 font-medium">Total Expenses</p>
+        </button>
+        
+        <button
+          onClick={onAddExpense}
+          className="bg-red-50 border-2 border-red-200 rounded-lg p-4 hover:bg-red-100 hover:border-red-300 transition-all cursor-pointer text-left"
+        >
+          <p className="text-sm text-red-600 font-medium flex items-center gap-2">
+            <span className="text-xl">➖</span> Total Expense (Click to Add)
+          </p>
           <p className="text-2xl font-bold text-red-700">${monthlyTotals.expenses.toFixed(2)}</p>
-        </div>
-        <div className={`${monthlyTotals.savings >= 0 ? 'bg-blue-50 border-blue-200' : 'bg-orange-50 border-orange-200'} border rounded-lg p-4`}>
+        </button>
+        
+        <div className={`${monthlyTotals.savings >= 0 ? 'bg-blue-50 border-blue-200' : 'bg-orange-50 border-orange-200'} border-2 rounded-lg p-4`}>
           <p className={`text-sm font-medium ${monthlyTotals.savings >= 0 ? 'text-blue-600' : 'text-orange-600'}`}>
             Net Savings
           </p>
@@ -152,42 +174,41 @@ const BudgetCalendar = ({ userId = 1 }) => {
         
         <div className="grid grid-cols-7">
           {Array.from({ length: startingDayOfWeek }).map((_, i) => (
-            <div key={`empty-${i}`} className="border-r border-b border-gray-200 p-2 bg-gray-50 min-h-[120px]"></div>
+            <div key={`empty-${i}`} className="border-r border-b border-gray-200 p-2 bg-gray-50 min-h-[140px]"></div>
           ))}
           
           {Array.from({ length: daysInMonth }).map((_, i) => {
             const day = i + 1;
             const dayTransactions = getTransactionsForDay(day);
-            const dayIncome = dayTransactions
-              .filter(t => t.type === 'income')
-              .reduce((sum, t) => sum + t.amount, 0);
-            const dayExpenses = dayTransactions
-              .filter(t => t.type === 'expense')
-              .reduce((sum, t) => sum + t.amount, 0);
 
             return (
               <div
                 key={day}
-                className="border-r border-b border-gray-200 p-2 min-h-[120px] hover:bg-gray-50 transition-colors"
+                className="border-r border-b border-gray-200 p-2 min-h-[140px] hover:bg-gray-50 transition-colors"
               >
                 <div className="font-semibold text-gray-700 mb-2">{day}</div>
-                {dayTransactions.length > 0 && (
-                  <div className="space-y-1">
-                    {dayIncome > 0 && (
-                      <div className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
-                        +${dayIncome.toFixed(2)}
+                <div className="space-y-1 max-h-[100px] overflow-y-auto">
+                  {dayTransactions.map((transaction, idx) => {
+                    const isIncome = transaction.type === 'income';
+                    return (
+                      <div
+                        key={idx}
+                        className={`text-xs px-2 py-1 rounded ${
+                          isIncome 
+                            ? 'bg-green-100 text-green-800 border border-green-200' 
+                            : 'bg-red-100 text-red-800 border border-red-200'
+                        }`}
+                      >
+                        <div className="font-semibold truncate">
+                          {transaction.category || (isIncome ? transaction.source : transaction.name)}
+                        </div>
+                        <div className="font-bold">
+                          {isIncome ? '+' : '-'}${transaction.amount.toFixed(2)}
+                        </div>
                       </div>
-                    )}
-                    {dayExpenses > 0 && (
-                      <div className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded">
-                        -${dayExpenses.toFixed(2)}
-                      </div>
-                    )}
-                    <div className="text-xs text-gray-500">
-                      {dayTransactions.length} transaction{dayTransactions.length > 1 ? 's' : ''}
-                    </div>
-                  </div>
-                )}
+                    );
+                  })}
+                </div>
               </div>
             );
           })}
@@ -197,4 +218,4 @@ const BudgetCalendar = ({ userId = 1 }) => {
   );
 };
 
-export default BudgetCalendar;
+export default WealthView;
