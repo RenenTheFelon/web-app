@@ -582,7 +582,7 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
               </button>
               <button
                 type="button"
-                onClick={() => handleViewChange('overview')}
+                onClick={() => handleViewChange('ledger-overview')}
                 className="px-6 bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
               >
                 Cancel
@@ -687,7 +687,7 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
               </button>
               <button
                 type="button"
-                onClick={() => handleViewChange('overview')}
+                onClick={() => handleViewChange('ledger-overview')}
                 className="px-6 bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
               >
                 Cancel
