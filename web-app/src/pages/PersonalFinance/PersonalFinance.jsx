@@ -7,7 +7,7 @@ import NetWorthTracker from './components/NetWorthTracker';
 
 const PersonalFinance = () => {
   const [activeTab, setActiveTab] = useState('wealthview');
-  const [trackerView, setTrackerView] = useState('overview');
+  const [trackerView, setTrackerView] = useState('ledger-overview');
   const userId = 1;
 
   const tabs = [

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { incomeAPI, expenseAPI, categoryAPI } from '../../../services/api';
 
-const IncomeExpenseTracker = ({ userId = 1, initialView = 'overview', onViewChange }) => {
+const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onViewChange }) => {
   const [view, setView] = useState(initialView);
   
   useEffect(() => {
@@ -84,7 +84,7 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'overview', onViewChan
         description: ''
       });
       fetchData();
-      handleViewChange('overview');
+      handleViewChange('ledger-overview');
     } catch (err) {
       console.error('Failed to add income:', err);
       alert('Failed to add income');
@@ -107,7 +107,7 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'overview', onViewChan
         description: ''
       });
       fetchData();
-      handleViewChange('overview');
+      handleViewChange('ledger-overview');
     } catch (err) {
       console.error('Failed to add expense:', err);
       alert('Failed to add expense');
@@ -175,21 +175,68 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'overview', onViewChan
 
   const totalIncome = incomeData.reduce((sum, item) => sum + item.amount, 0);
   const totalExpense = expenseData.reduce((sum, item) => sum + item.amount, 0);
+  const finalBalance = totalIncome - totalExpense;
+
+  // Merge income and expense data for ledger view
+  const getLedgerTransactions = () => {
+    const transactions = [
+      ...incomeData.map(item => ({
+        date: new Date(item.incomeDate),
+        description: item.description || item.source,
+        category: item.category,
+        income: item.amount,
+        expense: 0,
+        type: 'income',
+        id: item.id
+      })),
+      ...expenseData.map(item => ({
+        date: new Date(item.expenseDate),
+        description: item.description || item.name,
+        category: item.category,
+        income: 0,
+        expense: item.amount,
+        type: 'expense',
+        id: item.id
+      }))
+    ];
+    
+    // Sort by date (newest first)
+    transactions.sort((a, b) => b.date - a.date);
+    
+    // Calculate running balance
+    let runningBalance = 0;
+    for (let i = transactions.length - 1; i >= 0; i--) {
+      runningBalance += transactions[i].income - transactions[i].expense;
+      transactions[i].balance = runningBalance;
+    }
+    
+    return transactions;
+  };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-2xl font-bold text-gray-800">Income & Expense Overview</h3>
-        <div className="flex gap-3">
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <h3 className="text-2xl font-bold text-gray-800">Income & Expense Tracker</h3>
+        <div className="flex gap-2 flex-wrap">
           <button
-            onClick={() => handleViewChange('overview')}
+            onClick={() => handleViewChange('ledger-overview')}
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              view === 'overview'
+              view === 'ledger-overview'
+                ? 'bg-purple-500 text-white'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            📋 Ledger Overview
+          </button>
+          <button
+            onClick={() => handleViewChange('summary')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              view === 'summary'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
-            📊 Overview
+            📊 Summary
           </button>
           <button
             onClick={() => handleViewChange('add-income')}
@@ -214,7 +261,106 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'overview', onViewChan
         </div>
       </div>
 
-      {view === 'overview' && (
+      {view === 'ledger-overview' && (
+        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <div className="bg-purple-500 text-white px-6 py-4">
+            <h4 className="text-xl font-bold">Transaction Ledger</h4>
+            <p className="text-sm text-purple-100 mt-1">Complete view of all income and expenses</p>
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Income (Money In)</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Expense (Money Out)</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Overall Balance</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {getLedgerTransactions().length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="px-4 py-12 text-center text-gray-500">
+                      <div className="flex flex-col items-center gap-2">
+                        <span className="text-4xl">📭</span>
+                        <p className="font-medium">No transactions yet</p>
+                        <p className="text-sm">Add income or expenses to see them in the ledger</p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  getLedgerTransactions().map((transaction, index) => (
+                    <tr key={`${transaction.type}-${transaction.id}`} className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">
+                        {transaction.date.toLocaleDateString()}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-700">
+                        {transaction.description}
+                      </td>
+                      <td className="px-4 py-3 text-sm">
+                        <span className={`px-2 py-1 rounded text-xs font-medium ${
+                          transaction.type === 'income' 
+                            ? 'bg-green-100 text-green-700' 
+                            : 'bg-red-100 text-red-700'
+                        }`}>
+                          {transaction.category}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-right font-semibold">
+                        {transaction.income > 0 ? (
+                          <span className="text-green-600">+${transaction.income.toFixed(2)}</span>
+                        ) : (
+                          <span className="text-gray-300">—</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-right font-semibold">
+                        {transaction.expense > 0 ? (
+                          <span className="text-red-600">-${transaction.expense.toFixed(2)}</span>
+                        ) : (
+                          <span className="text-gray-300">—</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-right font-bold">
+                        <span className={transaction.balance >= 0 ? 'text-green-600' : 'text-red-600'}>
+                          ${transaction.balance.toFixed(2)}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+              {getLedgerTransactions().length > 0 && (
+                <tfoot className="bg-gray-100 border-t-2 border-gray-300">
+                  <tr className="font-bold">
+                    <td colSpan="3" className="px-4 py-4 text-sm text-gray-700 uppercase tracking-wide">
+                      Totals
+                    </td>
+                    <td className="px-4 py-4 text-sm text-right text-green-600 font-bold">
+                      +${totalIncome.toFixed(2)}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-right text-red-600 font-bold">
+                      -${totalExpense.toFixed(2)}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-right">
+                      <div className="flex flex-col items-end">
+                        <span className="text-xs text-gray-500 uppercase tracking-wide mb-1">Final Balance</span>
+                        <span className={`text-lg font-bold ${finalBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          ${finalBalance.toFixed(2)}
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                </tfoot>
+              )}
+            </table>
+          </div>
+        </div>
+      )}
+
+      {view === 'summary' && (
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-green-50 border border-green-200 rounded-lg p-4">
