@@ -75,12 +75,17 @@ The Personal Finance tab includes **5 fully integrated tools**:
 - Monthly totals and net savings calculations
 
 ### 2. Income & Expense Tracker 💰
-- Comprehensive overview with side-by-side tables for Income and Expense
-- Three view modes: Overview, Add Income, Add Expense
+- **Four view modes**: Ledger Overview, Summary, Add Income, Add Expense
+- **Ledger Overview**: Unified transaction table showing all income and expenses chronologically
+  - Columns: Date, Description, Category, Income (Money In), Expense (Money Out), Overall Balance
+  - Running balance calculation showing financial position after each transaction
+  - Totals row with Total Income, Total Expenses, and Final Balance
+  - Color-coded balances (green for positive, red for negative)
+- **Summary**: Side-by-side tables showing separate Income and Expense records
+- **Add Forms**: Dedicated forms for adding income and expenses with custom category support
 - Custom category management - create and select personalized categories
 - Category-based organization stored in database
 - Full CRUD operations (Create, Read, Delete)
-- Transaction history with Date, Category, Description, and Amount columns
 - Real-time data synchronization across all views
 
 ### 3. Spending Analytics Dashboard 📈
@@ -216,7 +221,21 @@ For migrating to your VPS:
 5. **CORS**: Update `backend/src/main/java/com/wealthwise/finance/config/CorsConfig.java` with your production frontend URL
 
 ## Recent Changes
-- **2025-11-02**: Personal Finance Redesign
+- **2025-11-02 (Part 2)**: Income & Expense Tracker Ledger Redesign
+  - **Ledger Overview**: New unified transaction view showing all income and expenses in one table
+    - Chronologically sorted transactions (newest first)
+    - Running balance calculation showing overall balance after each transaction
+    - Columns: Date, Description, Category, Money In, Money Out, Overall Balance
+    - Totals footer row showing Total Income, Total Expenses, and Final Balance
+    - Color-coded balances (green for positive, red for negative)
+  - **Renamed Tabs**: Changed tab structure from 3 to 4 views
+    - Old "Overview" renamed to "Summary" (kept side-by-side table layout)
+    - New "Ledger Overview" as primary view (first tab)
+    - Tab order: Ledger Overview → Summary → Add Income → Add Expense
+  - **Enhanced UX**: Responsive flex-wrap for tab buttons on mobile devices
+  - **Status**: ✅ All 4 views operational with dynamic balance calculations
+
+- **2025-11-02 (Part 1)**: Personal Finance Redesign
   - **Backend**: Added Category entity, repository, service, and controller for custom categories
   - **Database**: Created categories table with INCOME/EXPENSE type support
   - **Frontend**: Renamed Budget Calendar to WealthView with enhanced features
