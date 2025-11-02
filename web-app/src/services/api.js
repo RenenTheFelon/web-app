@@ -18,6 +18,7 @@ export const userAPI = {
 };
 
 export const incomeAPI = {
+  getByUserId: (userId) => api.get(`/income/user/${userId}`),
   getByUser: (userId) => api.get(`/income/user/${userId}`),
   getByDateRange: (userId, start, end) => api.get(`/income/user/${userId}/range`, { params: { start, end } }),
   getById: (id) => api.get(`/income/${id}`),
@@ -27,6 +28,7 @@ export const incomeAPI = {
 };
 
 export const expenseAPI = {
+  getByUserId: (userId) => api.get(`/expenses/user/${userId}`),
   getByUser: (userId) => api.get(`/expenses/user/${userId}`),
   getByDateRange: (userId, start, end) => api.get(`/expenses/user/${userId}/range`, { params: { start, end } }),
   getById: (id) => api.get(`/expenses/${id}`),
@@ -57,6 +59,15 @@ export const netWorthAPI = {
   create: (netWorth) => api.post('/networth', netWorth),
   update: (id, netWorth) => api.put(`/networth/${id}`, netWorth),
   delete: (id) => api.delete(`/networth/${id}`),
+};
+
+export const categoryAPI = {
+  getByUserId: (userId) => api.get(`/categories/user/${userId}`),
+  getByUserIdAndType: (userId, type) => api.get(`/categories/user/${userId}/type/${type}`),
+  getById: (id) => api.get(`/categories/${id}`),
+  create: (category) => api.post('/categories', category),
+  update: (id, category) => api.put(`/categories/${id}`, category),
+  delete: (id) => api.delete(`/categories/${id}`),
 };
 
 export default api;

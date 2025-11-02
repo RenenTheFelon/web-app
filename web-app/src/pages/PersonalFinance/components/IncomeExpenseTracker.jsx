@@ -1,24 +1,42 @@
 import { useState, useEffect } from 'react';
-import { incomeAPI, expenseAPI } from '../../../services/api';
+import { incomeAPI, expenseAPI, categoryAPI } from '../../../services/api';
 
-const IncomeExpenseTracker = ({ userId = 1 }) => {
-  const [activeTab, setActiveTab] = useState('income');
-  const [incomes, setIncomes] = useState([]);
-  const [expenses, setExpenses] = useState([]);
+const IncomeExpenseTracker = ({ userId = 1, initialView = 'overview', onViewChange }) => {
+  const [view, setView] = useState(initialView);
+  
+  useEffect(() => {
+    setView(initialView);
+  }, [initialView]);
+  
+  const handleViewChange = (newView) => {
+    setView(newView);
+    if (onViewChange) {
+      onViewChange(newView);
+    }
+  };
+  const [incomeData, setIncomeData] = useState([]);
+  const [expenseData, setExpenseData] = useState([]);
+  const [categories, setCategories] = useState({ income: [], expense: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [editingId, setEditingId] = useState(null);
-
-  const [formData, setFormData] = useState({
-    category: '',
+  
+  const [incomeForm, setIncomeForm] = useState({
+    source: '',
     amount: '',
-    date: new Date().toISOString().split('T')[0],
-    description: '',
-    source: ''
+    category: '',
+    incomeDate: new Date().toISOString().split('T')[0],
+    description: ''
+  });
+  
+  const [expenseForm, setExpenseForm] = useState({
+    name: '',
+    amount: '',
+    category: '',
+    expenseDate: new Date().toISOString().split('T')[0],
+    description: ''
   });
 
-  const incomeCategories = ['Salary', 'Freelance', 'Investment', 'Business', 'Gift', 'Other'];
-  const expenseCategories = ['Food', 'Transportation', 'Housing', 'Utilities', 'Healthcare', 'Entertainment', 'Shopping', 'Education', 'Other'];
+  const [newCategory, setNewCategory] = useState({ name: '', type: '' });
 
   useEffect(() => {
     fetchData();
@@ -28,12 +46,20 @@ const IncomeExpenseTracker = ({ userId = 1 }) => {
     setLoading(true);
     setError(null);
     try {
-      const [incomeRes, expenseRes] = await Promise.all([
-        incomeAPI.getByUser(userId),
-        expenseAPI.getByUser(userId)
+      const [incomeRes, expenseRes, categoriesRes] = await Promise.all([
+        incomeAPI.getByUserId(userId),
+        expenseAPI.getByUserId(userId),
+        categoryAPI.getByUserId(userId)
       ]);
-      setIncomes(incomeRes.data || []);
-      setExpenses(expenseRes.data || []);
+
+      setIncomeData(incomeRes.data || []);
+      setExpenseData(expenseRes.data || []);
+      
+      const cats = categoriesRes.data || [];
+      setCategories({
+        income: cats.filter(c => c.type === 'INCOME'),
+        expense: cats.filter(c => c.type === 'EXPENSE')
+      });
     } catch (err) {
       setError('Failed to fetch data');
       console.error(err);
@@ -42,297 +68,488 @@ const IncomeExpenseTracker = ({ userId = 1 }) => {
     }
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const resetForm = () => {
-    setFormData({
-      category: '',
-      amount: '',
-      date: new Date().toISOString().split('T')[0],
-      description: '',
-      source: ''
-    });
-    setEditingId(null);
-  };
-
-  const handleSubmit = async (e) => {
+  const handleAddIncome = async (e) => {
     e.preventDefault();
-    setError(null);
-
-    if (!formData.category || !formData.amount || !formData.date) {
-      setError('Please fill in all required fields');
-      return;
-    }
-
-    if (parseFloat(formData.amount) <= 0) {
-      setError('Amount must be greater than zero');
-      return;
-    }
-
     try {
-      const data = {
+      await incomeAPI.create({
+        ...incomeForm,
         userId,
-        category: formData.category,
-        amount: parseFloat(formData.amount),
-        date: formData.date,
-        description: formData.description
-      };
-
-      if (activeTab === 'income') {
-        data.source = formData.source || formData.category;
-        if (editingId) {
-          await incomeAPI.update(editingId, data);
-        } else {
-          await incomeAPI.create(data);
-        }
-      } else {
-        if (editingId) {
-          await expenseAPI.update(editingId, data);
-        } else {
-          await expenseAPI.create(data);
-        }
-      }
-
-      resetForm();
+        amount: parseFloat(incomeForm.amount)
+      });
+      setIncomeForm({
+        source: '',
+        amount: '',
+        category: '',
+        incomeDate: new Date().toISOString().split('T')[0],
+        description: ''
+      });
       fetchData();
+      handleViewChange('overview');
     } catch (err) {
-      setError(`Failed to ${editingId ? 'update' : 'create'} ${activeTab}`);
-      console.error(err);
+      console.error('Failed to add income:', err);
+      alert('Failed to add income');
     }
   };
 
-  const handleEdit = (item) => {
-    setFormData({
-      category: item.category,
-      amount: item.amount.toString(),
-      date: item.date,
-      description: item.description || '',
-      source: item.source || ''
-    });
-    setEditingId(item.id);
-  };
-
-  const handleDelete = async (id) => {
-    if (!confirm(`Are you sure you want to delete this ${activeTab}?`)) return;
-
+  const handleAddExpense = async (e) => {
+    e.preventDefault();
     try {
-      if (activeTab === 'income') {
-        await incomeAPI.delete(id);
-      } else {
-        await expenseAPI.delete(id);
-      }
+      await expenseAPI.create({
+        ...expenseForm,
+        userId,
+        amount: parseFloat(expenseForm.amount)
+      });
+      setExpenseForm({
+        name: '',
+        amount: '',
+        category: '',
+        expenseDate: new Date().toISOString().split('T')[0],
+        description: ''
+      });
       fetchData();
+      handleViewChange('overview');
     } catch (err) {
-      setError(`Failed to delete ${activeTab}`);
-      console.error(err);
+      console.error('Failed to add expense:', err);
+      alert('Failed to add expense');
     }
   };
 
-  const currentItems = activeTab === 'income' ? incomes : expenses;
-  const currentCategories = activeTab === 'income' ? incomeCategories : expenseCategories;
+  const handleAddCategory = async () => {
+    if (!newCategory.name || !newCategory.type) {
+      alert('Please enter category name and select type');
+      return;
+    }
+    try {
+      await categoryAPI.create({
+        name: newCategory.name,
+        type: newCategory.type,
+        userId
+      });
+      setNewCategory({ name: '', type: '' });
+      fetchData();
+    } catch (err) {
+      console.error('Failed to add category:', err);
+      alert('Failed to add category');
+    }
+  };
+
+  const handleDeleteIncome = async (id) => {
+    if (window.confirm('Are you sure you want to delete this income?')) {
+      try {
+        await incomeAPI.delete(id);
+        fetchData();
+      } catch (err) {
+        console.error('Failed to delete income:', err);
+        alert('Failed to delete income');
+      }
+    }
+  };
+
+  const handleDeleteExpense = async (id) => {
+    if (window.confirm('Are you sure you want to delete this expense?')) {
+      try {
+        await expenseAPI.delete(id);
+        fetchData();
+      } catch (err) {
+        console.error('Failed to delete expense:', err);
+        alert('Failed to delete expense');
+      }
+    }
+  };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="text-lg">Loading data...</div>
+        <div className="text-lg">Loading...</div>
       </div>
     );
   }
 
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <p className="text-red-800">{error}</p>
+      </div>
+    );
+  }
+
+  const totalIncome = incomeData.reduce((sum, item) => sum + item.amount, 0);
+  const totalExpense = expenseData.reduce((sum, item) => sum + item.amount, 0);
+
   return (
     <div className="space-y-6">
-      <div className="flex gap-2 border-b border-gray-200">
-        <button
-          onClick={() => { setActiveTab('income'); resetForm(); }}
-          className={`px-6 py-3 font-medium transition-colors ${
-            activeTab === 'income'
-              ? 'text-blue-600 border-b-2 border-blue-600'
-              : 'text-gray-600 hover:text-gray-800'
-          }`}
-        >
-          Income
-        </button>
-        <button
-          onClick={() => { setActiveTab('expenses'); resetForm(); }}
-          className={`px-6 py-3 font-medium transition-colors ${
-            activeTab === 'expenses'
-              ? 'text-blue-600 border-b-2 border-blue-600'
-              : 'text-gray-600 hover:text-gray-800'
-          }`}
-        >
-          Expenses
-        </button>
+      <div className="flex items-center justify-between">
+        <h3 className="text-2xl font-bold text-gray-800">Income & Expense Overview</h3>
+        <div className="flex gap-3">
+          <button
+            onClick={() => handleViewChange('overview')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              view === 'overview'
+                ? 'bg-blue-500 text-white'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            📊 Overview
+          </button>
+          <button
+            onClick={() => handleViewChange('add-income')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              view === 'add-income'
+                ? 'bg-green-500 text-white'
+                : 'bg-green-100 text-green-700 hover:bg-green-200'
+            }`}
+          >
+            ➕ Add Income
+          </button>
+          <button
+            onClick={() => handleViewChange('add-expense')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              view === 'add-expense'
+                ? 'bg-red-500 text-white'
+                : 'bg-red-100 text-red-700 hover:bg-red-200'
+            }`}
+          >
+            ➖ Add Expense
+          </button>
+        </div>
       </div>
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-800">{error}</p>
+      {view === 'overview' && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <p className="text-sm text-green-600 font-medium">Total Income</p>
+              <p className="text-3xl font-bold text-green-700">${totalIncome.toFixed(2)}</p>
+            </div>
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <p className="text-sm text-red-600 font-medium">Total Expense</p>
+              <p className="text-3xl font-bold text-red-700">${totalExpense.toFixed(2)}</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+              <div className="bg-green-500 text-white px-4 py-3 font-semibold">
+                Income Records ({incomeData.length})
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
+                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Amount</th>
+                      <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {incomeData.length === 0 ? (
+                      <tr>
+                        <td colSpan="5" className="px-4 py-8 text-center text-gray-500">
+                          No income records yet. Click "Add Income" to get started.
+                        </td>
+                      </tr>
+                    ) : (
+                      incomeData.map((item) => (
+                        <tr key={item.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 text-sm text-gray-900">
+                            {new Date(item.incomeDate).toLocaleDateString()}
+                          </td>
+                          <td className="px-4 py-3 text-sm">
+                            <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">
+                              {item.category}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-sm text-gray-600 truncate max-w-[150px]">
+                            {item.description || item.source}
+                          </td>
+                          <td className="px-4 py-3 text-sm text-right font-semibold text-green-600">
+                            +${item.amount.toFixed(2)}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <button
+                              onClick={() => handleDeleteIncome(item.id)}
+                              className="text-red-500 hover:text-red-700 text-sm font-medium"
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+              <div className="bg-red-500 text-white px-4 py-3 font-semibold">
+                Expense Records ({expenseData.length})
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
+                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Amount</th>
+                      <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {expenseData.length === 0 ? (
+                      <tr>
+                        <td colSpan="5" className="px-4 py-8 text-center text-gray-500">
+                          No expense records yet. Click "Add Expense" to get started.
+                        </td>
+                      </tr>
+                    ) : (
+                      expenseData.map((item) => (
+                        <tr key={item.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 text-sm text-gray-900">
+                            {new Date(item.expenseDate).toLocaleDateString()}
+                          </td>
+                          <td className="px-4 py-3 text-sm">
+                            <span className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-medium">
+                              {item.category}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-sm text-gray-600 truncate max-w-[150px]">
+                            {item.description || item.name}
+                          </td>
+                          <td className="px-4 py-3 text-sm text-right font-semibold text-red-600">
+                            -${item.amount.toFixed(2)}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <button
+                              onClick={() => handleDeleteExpense(item.id)}
+                              className="text-red-500 hover:text-red-700 text-sm font-medium"
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">
-            {editingId ? 'Edit' : 'Add'} {activeTab === 'income' ? 'Income' : 'Expense'}
-          </h3>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Category *
-              </label>
-              <select
-                name="category"
-                value={formData.category}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
+      {view === 'add-income' && (
+        <div className="max-w-2xl mx-auto bg-white border border-gray-200 rounded-lg p-6">
+          <h4 className="text-xl font-bold text-gray-800 mb-6">Add New Income</h4>
+          
+          <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <p className="text-sm font-medium text-blue-800 mb-2">Create Custom Category</p>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Category name"
+                value={newCategory.type === 'INCOME' ? newCategory.name : ''}
+                onChange={(e) => setNewCategory({ name: e.target.value, type: 'INCOME' })}
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <button
+                onClick={handleAddCategory}
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
               >
-                <option value="">Select category</option>
-                {currentCategories.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
+                Add Category
+              </button>
+            </div>
+          </div>
+
+          <form onSubmit={handleAddIncome} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Source</label>
+              <input
+                type="text"
+                required
+                value={incomeForm.source}
+                onChange={(e) => setIncomeForm({ ...incomeForm, source: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                placeholder="e.g., Salary, Freelance"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+              <select
+                required
+                value={incomeForm.category}
+                onChange={(e) => setIncomeForm({ ...incomeForm, category: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              >
+                <option value="">Select a category</option>
+                {categories.income.map((cat) => (
+                  <option key={cat.id} value={cat.name}>{cat.name}</option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Amount ($) *
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Amount</label>
               <input
                 type="number"
-                name="amount"
-                value={formData.amount}
-                onChange={handleInputChange}
-                placeholder="0.00"
                 step="0.01"
-                min="0.01"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
+                value={incomeForm.amount}
+                onChange={(e) => setIncomeForm({ ...incomeForm, amount: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                placeholder="0.00"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Date *
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
               <input
                 type="date"
-                name="date"
-                value={formData.date}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
+                value={incomeForm.incomeDate}
+                onChange={(e) => setIncomeForm({ ...incomeForm, incomeDate: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
             </div>
-
-            {activeTab === 'income' && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Source
-                </label>
-                <input
-                  type="text"
-                  name="source"
-                  value={formData.source}
-                  onChange={handleInputChange}
-                  placeholder="e.g., Company name"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-            )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Description (Optional)</label>
               <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                placeholder="Add notes..."
+                value={incomeForm.description}
+                onChange={(e) => setIncomeForm({ ...incomeForm, description: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 rows="3"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Additional notes..."
               />
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-3 pt-4">
               <button
                 type="submit"
-                className="flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors font-medium"
+                className="flex-1 bg-green-500 text-white py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors"
               >
-                {editingId ? 'Update' : 'Add'} {activeTab === 'income' ? 'Income' : 'Expense'}
+                Add Income
               </button>
-              {editingId && (
-                <button
-                  type="button"
-                  onClick={resetForm}
-                  className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
-                >
-                  Cancel
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => handleViewChange('overview')}
+                className="px-6 bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+              >
+                Cancel
+              </button>
             </div>
           </form>
         </div>
+      )}
 
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">
-            {activeTab === 'income' ? 'Income' : 'Expense'} History
-          </h3>
-
-          <div className="space-y-3 max-h-[600px] overflow-y-auto">
-            {currentItems.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">
-                No {activeTab} entries yet. Add your first entry!
-              </p>
-            ) : (
-              currentItems.map(item => (
-                <div
-                  key={item.id}
-                  className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <div className="font-semibold text-gray-800">{item.category}</div>
-                      <div className="text-sm text-gray-600">{item.date}</div>
-                    </div>
-                    <div className={`text-lg font-bold ${activeTab === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-                      {activeTab === 'income' ? '+' : '-'}${item.amount.toFixed(2)}
-                    </div>
-                  </div>
-                  
-                  {item.description && (
-                    <p className="text-sm text-gray-600 mb-2">{item.description}</p>
-                  )}
-                  
-                  {activeTab === 'income' && item.source && (
-                    <p className="text-xs text-gray-500 mb-2">Source: {item.source}</p>
-                  )}
-
-                  <div className="flex gap-2 mt-3">
-                    <button
-                      onClick={() => handleEdit(item)}
-                      className="flex-1 px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors text-sm font-medium"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(item.id)}
-                      className="flex-1 px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors text-sm font-medium"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
+      {view === 'add-expense' && (
+        <div className="max-w-2xl mx-auto bg-white border border-gray-200 rounded-lg p-6">
+          <h4 className="text-xl font-bold text-gray-800 mb-6">Add New Expense</h4>
+          
+          <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <p className="text-sm font-medium text-blue-800 mb-2">Create Custom Category</p>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Category name"
+                value={newCategory.type === 'EXPENSE' ? newCategory.name : ''}
+                onChange={(e) => setNewCategory({ name: e.target.value, type: 'EXPENSE' })}
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <button
+                onClick={handleAddCategory}
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              >
+                Add Category
+              </button>
+            </div>
           </div>
+
+          <form onSubmit={handleAddExpense} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+              <input
+                type="text"
+                required
+                value={expenseForm.name}
+                onChange={(e) => setExpenseForm({ ...expenseForm, name: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                placeholder="e.g., Groceries, Rent"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+              <select
+                required
+                value={expenseForm.category}
+                onChange={(e) => setExpenseForm({ ...expenseForm, category: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              >
+                <option value="">Select a category</option>
+                {categories.expense.map((cat) => (
+                  <option key={cat.id} value={cat.name}>{cat.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Amount</label>
+              <input
+                type="number"
+                step="0.01"
+                required
+                value={expenseForm.amount}
+                onChange={(e) => setExpenseForm({ ...expenseForm, amount: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                placeholder="0.00"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+              <input
+                type="date"
+                required
+                value={expenseForm.expenseDate}
+                onChange={(e) => setExpenseForm({ ...expenseForm, expenseDate: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Description (Optional)</label>
+              <textarea
+                value={expenseForm.description}
+                onChange={(e) => setExpenseForm({ ...expenseForm, description: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                rows="3"
+                placeholder="Additional notes..."
+              />
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <button
+                type="submit"
+                className="flex-1 bg-red-500 text-white py-3 rounded-lg font-semibold hover:bg-red-600 transition-colors"
+              >
+                Add Expense
+              </button>
+              <button
+                type="button"
+                onClick={() => handleViewChange('overview')}
+                className="px-6 bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
         </div>
-      </div>
+      )}
     </div>
   );
 };

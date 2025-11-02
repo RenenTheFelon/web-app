@@ -1,32 +1,39 @@
-import { useState } from 'react';
-import BudgetCalendar from './components/BudgetCalendar';
-import BudgetCalculator from './components/BudgetCalculator';
+import { useState, useRef } from 'react';
+import WealthView from './components/WealthView';
 import IncomeExpenseTracker from './components/IncomeExpenseTracker';
 import SpendingAnalytics from './components/SpendingAnalytics';
 import GoalPlanner from './components/GoalPlanner';
 import NetWorthTracker from './components/NetWorthTracker';
 
 const PersonalFinance = () => {
-  const [activeTab, setActiveTab] = useState('calendar');
+  const [activeTab, setActiveTab] = useState('wealthview');
+  const [trackerView, setTrackerView] = useState('overview');
   const userId = 1;
 
   const tabs = [
-    { id: 'calendar', label: 'Budget Calendar', icon: '📅' },
-    { id: 'calculator', label: 'Budget Calculator', icon: '🧮' },
+    { id: 'wealthview', label: 'WealthView', icon: '📅' },
     { id: 'tracker', label: 'Income & Expenses', icon: '💰' },
     { id: 'analytics', label: 'Spending Analytics', icon: '📊' },
     { id: 'goals', label: 'Goal Planner', icon: '🎯' },
     { id: 'networth', label: 'Net Worth', icon: '💎' }
   ];
 
+  const handleAddIncome = () => {
+    setActiveTab('tracker');
+    setTrackerView('add-income');
+  };
+
+  const handleAddExpense = () => {
+    setActiveTab('tracker');
+    setTrackerView('add-expense');
+  };
+
   const renderContent = () => {
     switch (activeTab) {
-      case 'calendar':
-        return <BudgetCalendar userId={userId} />;
-      case 'calculator':
-        return <BudgetCalculator userId={userId} />;
+      case 'wealthview':
+        return <WealthView userId={userId} onAddIncome={handleAddIncome} onAddExpense={handleAddExpense} />;
       case 'tracker':
-        return <IncomeExpenseTracker userId={userId} />;
+        return <IncomeExpenseTracker userId={userId} initialView={trackerView} onViewChange={setTrackerView} />;
       case 'analytics':
         return <SpendingAnalytics userId={userId} />;
       case 'goals':
@@ -34,7 +41,7 @@ const PersonalFinance = () => {
       case 'networth':
         return <NetWorthTracker userId={userId} />;
       default:
-        return <BudgetCalendar userId={userId} />;
+        return <WealthView userId={userId} onAddIncome={handleAddIncome} onAddExpense={handleAddExpense} />;
     }
   };
 
