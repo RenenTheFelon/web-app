@@ -64,41 +64,40 @@ This is a full-stack application with:
 
 ## Personal Finance Features
 
-The Personal Finance tab includes **6 fully integrated tools**:
+The Personal Finance tab includes **5 fully integrated tools**:
 
-### 1. Budget Calendar 📅
-- Monthly view of income and expenses
-- Daily transaction tracking
-- Visual indicators (green for income, red for expenses)
-- Monthly totals and balance calculations
+### 1. WealthView 📅
+- Monthly calendar view of all transactions
+- Clickable Total Income and Total Expense cards to quickly add new entries
+- Daily transaction tracking with individual events displayed
+- Each transaction shows category name and amount on the calendar
+- Color-coded visual indicators (green for income, red for expenses)
+- Monthly totals and net savings calculations
 
-### 2. Budget Calculator 💰
-- Input monthly income and expenses
-- Real-time balance calculation
-- Visual feedback (surplus/deficit indicators)
-- Save budgets to database
+### 2. Income & Expense Tracker 💰
+- Comprehensive overview with side-by-side tables for Income and Expense
+- Three view modes: Overview, Add Income, Add Expense
+- Custom category management - create and select personalized categories
+- Category-based organization stored in database
+- Full CRUD operations (Create, Read, Delete)
+- Transaction history with Date, Category, Description, and Amount columns
+- Real-time data synchronization across all views
 
-### 3. Income & Expense Tracker 📊
-- Dual tab interface for Income and Expenses
-- Category-based organization (8 expense, 6 income categories)
-- Full CRUD operations (Create, Read, Update, Delete)
-- Transaction history with date/description/amount
-
-### 4. Spending Analytics Dashboard 📈
+### 3. Spending Analytics Dashboard 📈
 - Category-based spending breakdown
 - Time range filtering (week/month/year)
 - Percentage distribution visualization
 - Top 5 expenses ranking
 - Key metrics cards
 
-### 5. Goal Planner 🎯
+### 4. Goal Planner 🎯
 - Create and track financial goals
 - Progress bars showing completion percentage
 - Target amount and date tracking
 - Status management (In Progress/Completed/Cancelled)
 - Days remaining calculations
 
-### 6. Net Worth Tracker 💎
+### 5. Net Worth Tracker 💎
 - Assets and liabilities management
 - Automatic net worth calculation (assets - liabilities)
 - Historical record tracking
@@ -109,6 +108,7 @@ The Personal Finance tab includes **6 fully integrated tools**:
 
 ### Tables
 - **users**: User accounts (id, username, email, timestamps)
+- **categories**: Custom income/expense categories (id, name, type, user_id, timestamps)
 - **income**: Income records (source, amount, category, date, description)
 - **expenses**: Expense records (name, amount, category, date, description)
 - **budgets**: Budget plans (name, total_income, total_expenses, balance, month/year)
@@ -120,6 +120,14 @@ All tables have foreign key relationships to users table for data isolation.
 ## API Endpoints
 
 All endpoints are prefixed with `/api`:
+
+### Categories
+- `GET /api/categories/user/{userId}` - Get all categories for user
+- `GET /api/categories/user/{userId}/type/{type}` - Get categories by type (INCOME/EXPENSE)
+- `GET /api/categories/{id}` - Get category by ID
+- `POST /api/categories` - Create category
+- `PUT /api/categories/{id}` - Update category
+- `DELETE /api/categories/{id}` - Delete category
 
 ### Users
 - `GET /api/users` - Get all users
@@ -208,6 +216,25 @@ For migrating to your VPS:
 5. **CORS**: Update `backend/src/main/java/com/wealthwise/finance/config/CorsConfig.java` with your production frontend URL
 
 ## Recent Changes
+- **2025-11-02**: Personal Finance Redesign
+  - **Backend**: Added Category entity, repository, service, and controller for custom categories
+  - **Database**: Created categories table with INCOME/EXPENSE type support
+  - **Frontend**: Renamed Budget Calendar to WealthView with enhanced features
+  - **Frontend**: Removed Budget Calculator component
+  - **Frontend**: Completely rebuilt Income & Expense Tracker with:
+    - Overview mode showing side-by-side tables
+    - Dedicated Add Income and Add Expense forms
+    - Custom category creation and management
+    - Real-time data synchronization
+  - **WealthView Enhancements**:
+    - Clickable Total Income/Expense cards that open add forms
+    - Calendar events displaying individual transactions with category and amount
+    - Color-coded transaction labels (green/red)
+  - **Integration**: Connected WealthView callbacks to Income & Expense Tracker view states
+  - **API**: Added 6 category endpoints for full CRUD operations
+  - Created 12 default categories (4 income, 8 expense) for demo user
+  - **Status**: ✅ All 5 Personal Finance tools operational with custom category support
+
 - **2025-11-01**: Full-stack Personal Finance implementation
   - Installed Java 17 and Spring Boot dependencies
   - Created complete Spring Boot backend with 6 REST controllers
@@ -220,7 +247,6 @@ For migrating to your VPS:
   - Fixed API routing: Changed from hardcoded localhost to relative `/api` path
   - Configured Vite proxy to route `/api` requests to backend on port 8080
   - Created demo user (id=1, username='demo_user')
-  - **Status**: ✅ Both frontend and backend running successfully with full integration
 
 ## Testing
 - **Demo User**: A test user (ID: 1, username: 'demo_user') is pre-created
