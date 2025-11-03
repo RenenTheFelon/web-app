@@ -80,4 +80,14 @@ export const recurringTransactionAPI = {
   generateInstances: (userId, year, month) => api.get(`/recurring/user/${userId}/generate/${year}/${month}`),
 };
 
+export const assetAPI = {
+  getByUser: (userId) => api.get(`/assets/user/${userId}`),
+  getByUserAndType: (userId, isAsset) => api.get(`/assets/user/${userId}/type/${isAsset}`),
+  getSummary: (userId) => api.get(`/assets/user/${userId}/summary`),
+  getById: (id) => api.get(`/assets/${id}`),
+  create: (asset) => api.post('/assets', asset),
+  update: (id, asset) => api.put(`/assets/${id}`, asset),
+  delete: (id) => api.delete(`/assets/${id}`),
+};
+
 export default api;
