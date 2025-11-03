@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import org.hibernate.annotations.CreatedDate;
-import org.hibernate.annotations.UpdatedTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -43,11 +41,9 @@ public class Asset {
     @Column(length = 500)
     private String description;
 
-    @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @UpdatedTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
