@@ -1,0 +1,43 @@
+I want to upgrade the functionality of the WealthView calendar, Income & Expense tracker, and Net Worth sections so that they reflect real, ongoing financial activity — similar to how I would use them in my everyday life.
+
+The overall goal is to make these tools dynamic and self-updating, not just static inputs.
+
+1️⃣ Calendar & Recurring Transactions
+
+The calendar should display all money coming in and going out — including things like debit orders, salary payments, and recurring monthly expenses.
+
+I want to be able to add a transaction once (for example, a debit order or salary), and have it automatically appear on the same date every month without me re-entering it.
+
+This will make the calendar act like a real financial timeline, showing repeating income and expense patterns over time.
+
+2️⃣ Income & Expense Tracker Integration
+
+The income and expense data should flow naturally into the calendar and update automatically when new recurring items are generated.
+
+The totals and summaries should reflect accurate figures each month, even as recurring transactions continue to roll over.
+
+The idea is to turn this section into a real financial record — something that reflects monthly trends in a user’s actual financial life.
+
+3️⃣ Net Worth Projection
+
+The Net Worth tab should show a clear picture of how a user’s wealth changes over time.
+
+It should calculate how much is being saved each month (based on total income minus total expenses) and show how that adds up month after month.
+
+This should be displayed as a growing, visually appealing graph — representing how a person’s net worth could look over a year as their savings accumulate.
+
+For now, the projection should only be based on savings from income and expenses, but later we’ll include assets like cars or property.
+
+4️⃣ Visual and Functional Goals
+
+The WealthView calendar becomes the central view of financial activity, showing recurring income and expenses clearly.
+
+The Income & Expense section acts as a control center where users manage and review what’s coming in and out.
+
+The Net Worth page visually reflects the results — a “wealth growth” dashboard that feels alive and updates automatically as transactions happen.
+
+5️⃣ Overall System Goal
+
+The whole system should connect together so that recurring transactions update the calendar, the calendar affects savings, and the savings are reflected in the projected net worth chart.
+
+I want this to feel like a complete personal financial dashboard that can be used to realistically manage and visualize my finances over time.

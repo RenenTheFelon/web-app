@@ -1,3 +1,4 @@
+/home/runner/workspace/backend/src/main/java/com/wealthwise/finance/dto/RecurringTransactionDto.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/service/NetWorthService.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/entity/Goal.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/controller/UserController.java
@@ -9,11 +10,14 @@
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/dto/IncomeDto.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/exception/ResourceNotFoundException.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/dto/GoalDto.java
+/home/runner/workspace/backend/src/main/java/com/wealthwise/finance/controller/RecurringTransactionController.java
+/home/runner/workspace/backend/src/main/java/com/wealthwise/finance/repository/RecurringTransactionRepository.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/entity/NetWorth.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/service/IncomeService.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/service/BudgetService.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/entity/User.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/controller/ExpenseController.java
+/home/runner/workspace/backend/src/main/java/com/wealthwise/finance/service/RecurringTransactionService.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/dto/ExpenseDto.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/entity/Budget.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/entity/Income.java
@@ -30,6 +34,7 @@
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/dto/CategoryDto.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/service/CategoryService.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/controller/NetWorthController.java
+/home/runner/workspace/backend/src/main/java/com/wealthwise/finance/entity/RecurringTransaction.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/repository/CategoryRepository.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/service/GoalService.java
 /home/runner/workspace/backend/src/main/java/com/wealthwise/finance/entity/Expense.java

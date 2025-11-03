@@ -70,4 +70,14 @@ export const categoryAPI = {
   delete: (id) => api.delete(`/categories/${id}`),
 };
 
+export const recurringTransactionAPI = {
+  getByUser: (userId) => api.get(`/recurring/user/${userId}`),
+  getActiveByUser: (userId) => api.get(`/recurring/user/${userId}/active`),
+  getById: (id) => api.get(`/recurring/${id}`),
+  create: (transaction) => api.post('/recurring', transaction),
+  update: (id, transaction) => api.put(`/recurring/${id}`, transaction),
+  delete: (id) => api.delete(`/recurring/${id}`),
+  generateInstances: (userId, year, month) => api.get(`/recurring/user/${userId}/generate/${year}/${month}`),
+};
+
 export default api;
