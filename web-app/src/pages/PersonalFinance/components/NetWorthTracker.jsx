@@ -50,21 +50,30 @@ const NetWorthTracker = ({ userId = 1 }) => {
       const currentDate = new Date();
       const projections = [];
       
-      const summaryRes = await assetAPI.getSummary(userId);
+      const [summaryRes, incomeRes, expenseRes, recurringRes] = await Promise.all([
+        assetAPI.getSummary(userId),
+        incomeAPI.getByUserId(userId),
+        expenseAPI.getByUserId(userId),
+        recurringTransactionAPI.getByUserId(userId)
+      ]);
+      
       const currentNetWorth = summaryRes.data?.netWorth || 0;
       
-      const recurringRes = await recurringTransactionAPI.getActiveByUser(userId);
-      const recurringData = recurringRes.data || [];
+      const totalRegularIncome = (incomeRes.data || []).reduce((sum, item) => sum + item.amount, 0);
+      const totalRegularExpense = (expenseRes.data || []).reduce((sum, item) => sum + item.amount, 0);
       
-      const monthlyIncome = recurringData
+      const recurringData = recurringRes.data || [];
+      const monthlyRecurringIncome = recurringData
         .filter(t => t.type === 'INCOME')
         .reduce((sum, t) => sum + t.amount, 0);
       
-      const monthlyExpenses = recurringData
+      const monthlyRecurringExpense = recurringData
         .filter(t => t.type === 'EXPENSE')
         .reduce((sum, t) => sum + t.amount, 0);
       
-      const monthlySavings = monthlyIncome - monthlyExpenses;
+      const totalMonthlyIncome = totalRegularIncome + monthlyRecurringIncome;
+      const totalMonthlyExpense = totalRegularExpense + monthlyRecurringExpense;
+      const monthlySavings = totalMonthlyIncome - totalMonthlyExpense;
       
       for (let i = 0; i < 12; i++) {
         const date = new Date(currentDate.getFullYear(), currentDate.getMonth() + i, 1);
