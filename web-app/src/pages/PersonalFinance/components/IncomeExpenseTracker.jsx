@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { incomeAPI, expenseAPI, categoryAPI, recurringTransactionAPI } from '../../../services/api';
+import { incomeAPI, expenseAPI, categoryAPI } from '../../../services/api';
 
 const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onViewChange }) => {
   const [view, setView] = useState(initialView);
@@ -16,7 +16,6 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
   };
   const [incomeData, setIncomeData] = useState([]);
   const [expenseData, setExpenseData] = useState([]);
-  const [recurringData, setRecurringData] = useState([]);
   const [categories, setCategories] = useState({ income: [], expense: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -47,16 +46,14 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
     setLoading(true);
     setError(null);
     try {
-      const [incomeRes, expenseRes, categoriesRes, recurringRes] = await Promise.all([
+      const [incomeRes, expenseRes, categoriesRes] = await Promise.all([
         incomeAPI.getByUserId(userId),
         expenseAPI.getByUserId(userId),
-        categoryAPI.getByUserId(userId),
-        recurringTransactionAPI.getByUserId(userId)
+        categoryAPI.getByUserId(userId)
       ]);
 
       setIncomeData(incomeRes.data || []);
       setExpenseData(expenseRes.data || []);
-      setRecurringData(recurringRes.data || []);
       
       const cats = categoriesRes.data || [];
       setCategories({
@@ -176,15 +173,12 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
     );
   }
 
-  const recurringIncome = recurringData.filter(r => r.type === 'INCOME').reduce((sum, item) => sum + item.amount, 0);
-  const recurringExpense = recurringData.filter(r => r.type === 'EXPENSE').reduce((sum, item) => sum + item.amount, 0);
-  const totalIncome = incomeData.reduce((sum, item) => sum + item.amount, 0) + recurringIncome;
-  const totalExpense = expenseData.reduce((sum, item) => sum + item.amount, 0) + recurringExpense;
+  const totalIncome = incomeData.reduce((sum, item) => sum + item.amount, 0);
+  const totalExpense = expenseData.reduce((sum, item) => sum + item.amount, 0);
   const finalBalance = totalIncome - totalExpense;
 
-  // Merge income, expense, and recurring data for ledger view
+  // Merge income and expense data for ledger view
   const getLedgerTransactions = () => {
-    const currentDate = new Date();
     const transactions = [
       ...incomeData.map(item => ({
         date: new Date(item.incomeDate),
@@ -193,7 +187,6 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
         income: item.amount,
         expense: 0,
         type: 'income',
-        recurring: false,
         id: item.id
       })),
       ...expenseData.map(item => ({
@@ -203,22 +196,8 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
         income: 0,
         expense: item.amount,
         type: 'expense',
-        recurring: false,
         id: item.id
-      })),
-      ...recurringData.map(item => {
-        const recurringDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), item.dayOfMonth);
-        return {
-          date: recurringDate,
-          description: `${item.description || item.name} (Recurring - ${item.frequency})`,
-          category: item.category,
-          income: item.type === 'INCOME' ? item.amount : 0,
-          expense: item.type === 'EXPENSE' ? item.amount : 0,
-          type: item.type.toLowerCase(),
-          recurring: true,
-          id: item.id
-        };
-      })
+      }))
     ];
     
     // Sort by date (newest first)
@@ -314,10 +293,8 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
                   </tr>
                 ) : (
                   getLedgerTransactions().map((transaction, index) => (
-                    <tr key={`${transaction.type}-${transaction.id}-${transaction.recurring ? 'recurring' : 'regular'}`} 
-                        className={`hover:bg-gray-50 ${transaction.recurring ? 'border-l-4 border-l-blue-400 bg-blue-50/30' : ''}`}>
+                    <tr key={`${transaction.type}-${transaction.id}`} className="hover:bg-gray-50">
                       <td className="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">
-                        {transaction.recurring && <span className="mr-1 text-blue-500">↻</span>}
                         {transaction.date.toLocaleDateString()}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-700">
