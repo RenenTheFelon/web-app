@@ -4,6 +4,7 @@ com/wealthwise/finance/service/UserService.class
 com/wealthwise/finance/controller/ExpenseController.class
 com/wealthwise/finance/entity/RecurringTransaction$Frequency.class
 com/wealthwise/finance/controller/NetWorthController.class
+com/wealthwise/finance/service/MonthlyBalanceService.class
 com/wealthwise/finance/controller/BudgetController.class
 com/wealthwise/finance/entity/Budget.class
 com/wealthwise/finance/service/GoalService.class
@@ -21,10 +22,12 @@ com/wealthwise/finance/dto/ExpenseDto.class
 com/wealthwise/finance/exception/ResourceNotFoundException.class
 com/wealthwise/finance/entity/Income.class
 com/wealthwise/finance/entity/Expense.class
+com/wealthwise/finance/repository/MonthlyBalanceRepository.class
 com/wealthwise/finance/repository/NetWorthRepository.class
 com/wealthwise/finance/controller/CategoryController.class
 com/wealthwise/finance/service/RecurringTransactionService.class
 com/wealthwise/finance/repository/GoalRepository.class
+com/wealthwise/finance/entity/MonthlyBalance.class
 com/wealthwise/finance/controller/RecurringTransactionController.class
 com/wealthwise/finance/dto/BudgetDto.class
 com/wealthwise/finance/controller/AssetController.class
@@ -44,6 +47,7 @@ com/wealthwise/finance/service/CategoryService.class
 com/wealthwise/finance/entity/Asset.class
 com/wealthwise/finance/repository/AssetRepository.class
 com/wealthwise/finance/repository/UserRepository.class
+com/wealthwise/finance/controller/MonthlyBalanceController.class
 com/wealthwise/finance/entity/Category.class
 com/wealthwise/finance/dto/GoalDto.class
 com/wealthwise/finance/dto/NetWorthDto.class

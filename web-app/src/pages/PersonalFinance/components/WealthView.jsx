@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { incomeAPI, expenseAPI, recurringTransactionAPI } from '../../../services/api';
+import { incomeAPI, expenseAPI, recurringTransactionAPI, monthlyBalanceAPI } from '../../../services/api';
 
 const WealthView = ({ userId = 1, onAddIncome, onAddExpense }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -12,6 +12,12 @@ const WealthView = ({ userId = 1, onAddIncome, onAddExpense }) => {
     savings: 0,
     recurringIncome: 0,
     recurringExpenses: 0
+  });
+  const [monthlyBalance, setMonthlyBalance] = useState({
+    openingBalance: 0,
+    closingBalance: 0,
+    totalIncome: 0,
+    totalExpense: 0
   });
 
   useEffect(() => {
@@ -27,15 +33,24 @@ const WealthView = ({ userId = 1, onAddIncome, onAddExpense }) => {
       const startDate = new Date(year, month - 1, 1).toISOString().split('T')[0];
       const endDate = new Date(year, month, 0).toISOString().split('T')[0];
 
-      const [incomeRes, expenseRes, recurringRes] = await Promise.all([
+      const [incomeRes, expenseRes, recurringRes, balanceRes] = await Promise.all([
         incomeAPI.getByDateRange(userId, startDate, endDate),
         expenseAPI.getByDateRange(userId, startDate, endDate),
-        recurringTransactionAPI.generateInstances(userId, year, month)
+        recurringTransactionAPI.generateInstances(userId, year, month),
+        monthlyBalanceAPI.getMonthlyBalance(year, month)
       ]);
 
       const incomeData = incomeRes.data || [];
       const expenseData = expenseRes.data || [];
       const recurringData = recurringRes.data || [];
+      const balanceData = balanceRes.data || {};
+
+      setMonthlyBalance({
+        openingBalance: balanceData.openingBalance || 0,
+        closingBalance: balanceData.closingBalance || 0,
+        totalIncome: balanceData.totalIncome || 0,
+        totalExpense: balanceData.totalExpense || 0
+      });
 
       const allTransactions = [
         ...incomeData.map(item => ({ 
@@ -150,6 +165,26 @@ const WealthView = ({ userId = 1, onAddIncome, onAddExpense }) => {
           >
             Next
           </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="bg-purple-50 border-2 border-purple-200 rounded-lg p-4">
+          <p className="text-sm text-purple-600 font-medium">Opening Balance</p>
+          <p className="text-2xl font-bold text-purple-700">${monthlyBalance.openingBalance.toFixed(2)}</p>
+          <p className="text-xs text-purple-500 mt-1">Carried from previous month</p>
+        </div>
+        
+        <div className={`${monthlyBalance.closingBalance >= 0 ? 'bg-teal-50 border-teal-200' : 'bg-orange-50 border-orange-200'} border-2 rounded-lg p-4`}>
+          <p className={`text-sm font-medium ${monthlyBalance.closingBalance >= 0 ? 'text-teal-600' : 'text-orange-600'}`}>
+            Closing Balance
+          </p>
+          <p className={`text-2xl font-bold ${monthlyBalance.closingBalance >= 0 ? 'text-teal-700' : 'text-orange-700'}`}>
+            ${monthlyBalance.closingBalance.toFixed(2)}
+          </p>
+          <p className={`text-xs mt-1 ${monthlyBalance.closingBalance >= 0 ? 'text-teal-500' : 'text-orange-500'}`}>
+            Will carry to next month
+          </p>
         </div>
       </div>
 

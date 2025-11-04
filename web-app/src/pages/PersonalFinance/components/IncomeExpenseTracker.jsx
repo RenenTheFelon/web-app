@@ -324,7 +324,8 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
         income: item.amount,
         expense: 0,
         type: 'income',
-        id: item.id
+        id: item.id,
+        isRecurring: false
       })),
       ...expenseData.map(item => ({
         date: new Date(item.expenseDate),
@@ -333,8 +334,21 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
         income: 0,
         expense: item.amount,
         type: 'expense',
-        id: item.id
-      }))
+        id: item.id,
+        isRecurring: false
+      })),
+      ...recurringTransactions
+        .filter(rt => rt.isActive)
+        .map(rt => ({
+          date: new Date(),
+          description: `${rt.name} (Recurring ${rt.frequency.toLowerCase()})`,
+          category: rt.category,
+          income: rt.type === 'INCOME' ? rt.amount : 0,
+          expense: rt.type === 'EXPENSE' ? rt.amount : 0,
+          type: rt.type.toLowerCase(),
+          id: `recurring-${rt.id}`,
+          isRecurring: true
+        }))
     ];
     
     transactions.sort((a, b) => b.date - a.date);
@@ -438,8 +452,9 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
                   </tr>
                 ) : (
                   getLedgerTransactions().map((transaction, index) => (
-                    <tr key={`${transaction.type}-${transaction.id}`} className="hover:bg-gray-50">
+                    <tr key={`${transaction.type}-${transaction.id}`} className={`hover:bg-gray-50 ${transaction.isRecurring ? 'bg-blue-50 border-l-4 border-l-blue-400' : ''}`}>
                       <td className="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">
+                        {transaction.isRecurring && <span className="text-blue-500 mr-1" title="Recurring transaction">↻</span>}
                         {transaction.date.toLocaleDateString()}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-700">

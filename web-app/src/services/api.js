@@ -90,4 +90,11 @@ export const assetAPI = {
   delete: (id) => api.delete(`/assets/${id}`),
 };
 
+export const monthlyBalanceAPI = {
+  getMonthlyBalance: (year, month) => api.get(`/monthly-balances/${year}/${month}`),
+  getProjectedBalance: (year, month) => api.get(`/monthly-balances/projection/${year}/${month}`),
+  getAllBalances: () => api.get('/monthly-balances'),
+  recalculate: (year, month) => api.post(`/monthly-balances/recalculate/${year}/${month}`),
+};
+
 export default api;

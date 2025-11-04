@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { assetAPI, recurringTransactionAPI, incomeAPI, expenseAPI } from '../../../services/api';
+import { assetAPI, recurringTransactionAPI, incomeAPI, expenseAPI, monthlyBalanceAPI } from '../../../services/api';
 
 const NetWorthTracker = ({ userId = 1 }) => {
   const [assets, setAssets] = useState([]);
@@ -53,29 +53,43 @@ const NetWorthTracker = ({ userId = 1 }) => {
       const summaryRes = await assetAPI.getSummary(userId);
       const currentNetWorth = summaryRes.data?.netWorth || 0;
       
-      const recurringRes = await recurringTransactionAPI.getActiveByUser(userId);
-      const recurringData = recurringRes.data || [];
-      
-      const monthlyIncome = recurringData
-        .filter(t => t.type === 'INCOME')
-        .reduce((sum, t) => sum + t.amount, 0);
-      
-      const monthlyExpenses = recurringData
-        .filter(t => t.type === 'EXPENSE')
-        .reduce((sum, t) => sum + t.amount, 0);
-      
-      const monthlySavings = monthlyIncome - monthlyExpenses;
+      let cumulativeBalance = 0;
       
       for (let i = 0; i < 12; i++) {
         const date = new Date(currentDate.getFullYear(), currentDate.getMonth() + i, 1);
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
         const monthName = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-        const projectedNetWorth = currentNetWorth + (monthlySavings * i);
         
-        projections.push({
-          month: monthName,
-          netWorth: projectedNetWorth,
-          monthIndex: i
-        });
+        try {
+          const balanceRes = await monthlyBalanceAPI.getProjectedBalance(year, month);
+          const balanceData = balanceRes.data || {};
+          
+          const openingBalance = balanceData.openingBalance || 0;
+          const projectedClosing = balanceData.projectedClosingBalance || 0;
+          const monthlyDelta = projectedClosing - openingBalance;
+          
+          cumulativeBalance += monthlyDelta;
+          
+          const projectedNetWorth = currentNetWorth + cumulativeBalance;
+          
+          projections.push({
+            month: monthName,
+            netWorth: projectedNetWorth,
+            monthIndex: i,
+            monthlyChange: monthlyDelta,
+            cumulativeBalance: cumulativeBalance
+          });
+        } catch (err) {
+          console.error(`Failed to get balance for ${monthName}:`, err);
+          projections.push({
+            month: monthName,
+            netWorth: currentNetWorth + cumulativeBalance,
+            monthIndex: i,
+            monthlyChange: 0,
+            cumulativeBalance: cumulativeBalance
+          });
+        }
       }
       
       setProjectionData(projections);
