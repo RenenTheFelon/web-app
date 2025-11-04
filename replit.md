@@ -23,9 +23,18 @@ WealthWise is a full-stack application utilizing a React frontend and a Spring B
     - Closing balance = opening balance + total income - total expenses
     - Repository uses Spring Data naming convention with `findFirstByUserIdAndYearAndMonthBefore` to prevent NonUniqueResultException
     - Unique constraint on (user_id, year, month) ensures data integrity
+- **Monthly Projection System**: Recurring transactions automatically generate actual income/expense database entries for 12 months ahead:
+    - Income and Expense entities include `is_recurring` boolean flag and `recurring_transaction_id` foreign key
+    - Backend automatically creates/updates/deletes future entries when recurring transactions change
+    - Frontend displays recurring entries with visual indicators (↻ icon, blue highlight)
+    - All financial tools filter and display month-specific data with accurate running balances
 - **Personal Finance Tools**: Includes five core tools:
     1.  **WealthView**: Monthly calendar view with automatic carryover balances. Displays opening balance (carried from previous month) and closing balance (will carry to next month) prominently. Shows transactions, recurring projections, and net savings with clean visual hierarchy.
-    2.  **Income & Expense Tracker**: Unified ledger with five sub-tabs (Ledger Overview, Summary, Add Income, Add Expense, Recurring). Ledger Overview displays projected recurring transactions inline with actual transactions, using visual indicators (blue background, ↻ icon) to distinguish them. Includes "Make this recurring" checkbox in income/expense forms to create recurring transactions inline. The Recurring sub-tab manages recurring income/expense templates with various frequencies (daily, weekly, biweekly, monthly), automatic calendar projections, and full CRUD operations (create, edit, delete, toggle active/inactive).
+    2.  **Income & Expense Tracker**: Unified ledger with five sub-tabs supporting full monthly projection navigation:
+        - **Ledger Overview**: Month-by-month ledger with Previous/Next navigation buttons. Displays opening balance ("Carried from previous month") and projected closing balance ("Will carry to next month") for selected month. Running balance calculation starts from monthly opening balance. Shows all income/expense entries including recurring projections with visual indicators (↻ icon, blue highlight, blue left border).
+        - **Summary**: Month-filtered view showing total income, total expense, and detailed transaction tables for the selected month. Recurring transactions identified with ↻ icon and blue highlight.
+        - **Add Income/Add Expense**: Forms for adding one-time or recurring transactions with inline "Make this recurring" checkbox.
+        - **Recurring**: Manages recurring transaction templates with full CRUD operations (create, edit, delete, toggle active/inactive).
     3.  **Spending Analytics Dashboard**: Category-based spending breakdown with time range filtering and visualization.
     4.  **Goal Planner**: Tracks financial goals with progress bars and status management.
     5.  **Net Worth Tracker**: Manages assets/liabilities and calculates historical net worth. Features 12-month projection visualization using monthly balance carryover data - accurately accumulates monthly deltas (closing - opening) to project future net worth based on recurring income/expenses.
