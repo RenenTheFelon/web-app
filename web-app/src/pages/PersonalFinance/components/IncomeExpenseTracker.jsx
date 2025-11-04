@@ -354,13 +354,31 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
     );
   }
 
-  const totalIncome = incomeData.reduce((sum, item) => sum + item.amount, 0);
-  const totalExpense = expenseData.reduce((sum, item) => sum + item.amount, 0);
+  // Filter transactions by selected month and year
+  const getFilteredIncomeData = () => {
+    return incomeData.filter(item => {
+      const date = new Date(item.incomeDate);
+      return date.getMonth() + 1 === selectedMonth && date.getFullYear() === selectedYear;
+    });
+  };
+
+  const getFilteredExpenseData = () => {
+    return expenseData.filter(item => {
+      const date = new Date(item.expenseDate);
+      return date.getMonth() + 1 === selectedMonth && date.getFullYear() === selectedYear;
+    });
+  };
+
+  const filteredIncome = getFilteredIncomeData();
+  const filteredExpense = getFilteredExpenseData();
+
+  const totalIncome = filteredIncome.reduce((sum, item) => sum + item.amount, 0);
+  const totalExpense = filteredExpense.reduce((sum, item) => sum + item.amount, 0);
   const finalBalance = totalIncome - totalExpense;
 
   const getLedgerTransactions = () => {
     const transactions = [
-      ...incomeData.map(item => ({
+      ...filteredIncome.map(item => ({
         date: new Date(item.incomeDate),
         description: item.description || item.source,
         category: item.category,
@@ -370,7 +388,7 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
         id: item.id,
         isRecurring: item.isRecurring || false
       })),
-      ...expenseData.map(item => ({
+      ...filteredExpense.map(item => ({
         date: new Date(item.expenseDate),
         description: item.description || item.name,
         category: item.category,
@@ -379,24 +397,13 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
         type: 'expense',
         id: item.id,
         isRecurring: item.isRecurring || false
-      })),
-      ...recurringTransactions
-        .filter(rt => rt.isActive)
-        .map(rt => ({
-          date: new Date(),
-          description: `${rt.name} (Recurring ${rt.frequency.toLowerCase()})`,
-          category: rt.category,
-          income: rt.type === 'INCOME' ? rt.amount : 0,
-          expense: rt.type === 'EXPENSE' ? rt.amount : 0,
-          type: rt.type.toLowerCase(),
-          id: `recurring-${rt.id}`,
-          isRecurring: true
-        }))
+      }))
     ];
     
     transactions.sort((a, b) => b.date - a.date);
     
-    let runningBalance = 0;
+    // Start running balance from opening balance if available
+    let runningBalance = monthlyBalance?.openingBalance || 0;
     for (let i = transactions.length - 1; i >= 0; i--) {
       runningBalance += transactions[i].income - transactions[i].expense;
       transactions[i].balance = runningBalance;
@@ -614,7 +621,7 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
               <div className="bg-green-500 text-white px-4 py-3 font-semibold">
-                Income Records ({incomeData.length})
+                Income Records ({filteredIncome.length})
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -628,14 +635,14 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {incomeData.length === 0 ? (
+                    {filteredIncome.length === 0 ? (
                       <tr>
                         <td colSpan="5" className="px-4 py-8 text-center text-gray-500">
-                          No income records yet. Click "Add Income" to get started.
+                          No income records for this month.
                         </td>
                       </tr>
                     ) : (
-                      incomeData.map((item) => (
+                      filteredIncome.map((item) => (
                         <tr key={item.id} className={`hover:bg-gray-50 ${item.isRecurring ? 'bg-blue-50' : ''}`}>
                           <td className="px-4 py-3 text-sm text-gray-900">
                             {item.isRecurring && <span className="text-blue-500 mr-1" title="Recurring transaction">↻</span>}
@@ -670,7 +677,7 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
 
             <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
               <div className="bg-red-500 text-white px-4 py-3 font-semibold">
-                Expense Records ({expenseData.length})
+                Expense Records ({filteredExpense.length})
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -684,14 +691,14 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {expenseData.length === 0 ? (
+                    {filteredExpense.length === 0 ? (
                       <tr>
                         <td colSpan="5" className="px-4 py-8 text-center text-gray-500">
-                          No expense records yet. Click "Add Expense" to get started.
+                          No expense records for this month.
                         </td>
                       </tr>
                     ) : (
-                      expenseData.map((item) => (
+                      filteredExpense.map((item) => (
                         <tr key={item.id} className={`hover:bg-gray-50 ${item.isRecurring ? 'bg-blue-50' : ''}`}>
                           <td className="px-4 py-3 text-sm text-gray-900">
                             {item.isRecurring && <span className="text-blue-500 mr-1" title="Recurring transaction">↻</span>}
