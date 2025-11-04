@@ -4,7 +4,6 @@ import IncomeExpenseTracker from './components/IncomeExpenseTracker';
 import SpendingAnalytics from './components/SpendingAnalytics';
 import GoalPlanner from './components/GoalPlanner';
 import NetWorthTracker from './components/NetWorthTracker';
-import RecurringTransactionManager from './components/RecurringTransactionManager';
 
 const PersonalFinance = () => {
   const [activeTab, setActiveTab] = useState('wealthview');
@@ -14,7 +13,6 @@ const PersonalFinance = () => {
   const tabs = [
     { id: 'wealthview', label: 'WealthView', icon: '📅' },
     { id: 'tracker', label: 'Income & Expenses', icon: '💰' },
-    { id: 'recurring', label: 'Recurring Transactions', icon: '🔄' },
     { id: 'analytics', label: 'Spending Analytics', icon: '📊' },
     { id: 'goals', label: 'Goal Planner', icon: '🎯' },
     { id: 'networth', label: 'Net Worth', icon: '💎' }
@@ -36,8 +34,6 @@ const PersonalFinance = () => {
         return <WealthView userId={userId} onAddIncome={handleAddIncome} onAddExpense={handleAddExpense} />;
       case 'tracker':
         return <IncomeExpenseTracker userId={userId} initialView={trackerView} onViewChange={setTrackerView} />;
-      case 'recurring':
-        return <RecurringTransactionManager userId={userId} />;
       case 'analytics':
         return <SpendingAnalytics userId={userId} />;
       case 'goals':
