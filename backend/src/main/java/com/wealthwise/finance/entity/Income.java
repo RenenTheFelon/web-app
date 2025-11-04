@@ -38,6 +38,12 @@ public class Income {
     @Column(length = 500)
     private String description;
 
+    @Column(name = "is_recurring", nullable = false)
+    private Boolean isRecurring = false;
+
+    @Column(name = "recurring_transaction_id")
+    private Long recurringTransactionId;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 }

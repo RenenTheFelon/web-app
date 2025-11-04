@@ -13,6 +13,8 @@ import java.util.List;
 public interface IncomeRepository extends JpaRepository<Income, Long> {
     List<Income> findByUserId(Long userId);
     List<Income> findByUserIdAndIncomeDateBetween(Long userId, LocalDate start, LocalDate end);
+    List<Income> findByUserIdAndIsRecurring(Long userId, Boolean isRecurring);
+    List<Income> findByRecurringTransactionId(Long recurringTransactionId);
     
     @Query("SELECT i FROM Income i WHERE i.user.id = :userId AND i.category = :category")
     List<Income> findByUserIdAndCategory(@Param("userId") Long userId, @Param("category") String category);

@@ -13,6 +13,8 @@ import java.util.List;
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
     List<Expense> findByUserId(Long userId);
     List<Expense> findByUserIdAndExpenseDateBetween(Long userId, LocalDate start, LocalDate end);
+    List<Expense> findByUserIdAndIsRecurring(Long userId, Boolean isRecurring);
+    List<Expense> findByRecurringTransactionId(Long recurringTransactionId);
     
     @Query("SELECT e FROM Expense e WHERE e.user.id = :userId AND e.category = :category")
     List<Expense> findByUserIdAndCategory(@Param("userId") Long userId, @Param("category") String category);

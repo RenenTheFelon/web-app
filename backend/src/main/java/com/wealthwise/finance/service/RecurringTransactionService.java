@@ -2,13 +2,19 @@ package com.wealthwise.finance.service;
 
 import com.wealthwise.finance.dto.RecurringTransactionDto;
 import com.wealthwise.finance.entity.RecurringTransaction;
+import com.wealthwise.finance.entity.Income;
+import com.wealthwise.finance.entity.Expense;
 import com.wealthwise.finance.entity.User;
 import com.wealthwise.finance.exception.ResourceNotFoundException;
 import com.wealthwise.finance.repository.RecurringTransactionRepository;
+import com.wealthwise.finance.repository.IncomeRepository;
+import com.wealthwise.finance.repository.ExpenseRepository;
 import com.wealthwise.finance.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -23,6 +29,8 @@ import java.util.stream.Collectors;
 public class RecurringTransactionService {
     private final RecurringTransactionRepository recurringTransactionRepository;
     private final UserRepository userRepository;
+    private final IncomeRepository incomeRepository;
+    private final ExpenseRepository expenseRepository;
 
     @Transactional(readOnly = true)
     public List<RecurringTransactionDto> getAllByUser(Long userId) {
@@ -53,6 +61,11 @@ public class RecurringTransactionService {
         RecurringTransaction recurringTransaction = convertToEntity(dto);
         recurringTransaction.setUser(user);
         RecurringTransaction saved = recurringTransactionRepository.save(recurringTransaction);
+        
+        if (saved.getIsActive()) {
+            generateFutureEntries(saved, 12);
+        }
+        
         return convertToDto(saved);
     }
 
@@ -73,6 +86,13 @@ public class RecurringTransactionService {
         recurringTransaction.setDescription(dto.getDescription());
         
         RecurringTransaction updated = recurringTransactionRepository.save(recurringTransaction);
+        
+        if (updated.getIsActive()) {
+            generateFutureEntries(updated, 12);
+        } else {
+            deleteExistingRecurringEntries(updated.getId());
+        }
+        
         return convertToDto(updated);
     }
 
@@ -81,6 +101,7 @@ public class RecurringTransactionService {
         if (!recurringTransactionRepository.existsById(id)) {
             throw new ResourceNotFoundException("Recurring transaction not found with id: " + id);
         }
+        deleteExistingRecurringEntries(id);
         recurringTransactionRepository.deleteById(id);
     }
 
@@ -114,6 +135,62 @@ public class RecurringTransactionService {
         }
         
         return instances;
+    }
+
+    @Transactional
+    public void generateFutureEntries(RecurringTransaction rt, int monthsAhead) {
+        deleteExistingRecurringEntries(rt.getId());
+        
+        LocalDate currentDate = LocalDate.now();
+        LocalDate startDate = rt.getStartDate().isAfter(currentDate) ? rt.getStartDate() : currentDate;
+        LocalDate endDate = rt.getEndDate();
+        
+        for (int i = 0; i < monthsAhead; i++) {
+            YearMonth yearMonth = YearMonth.from(startDate.plusMonths(i));
+            int daysInMonth = yearMonth.lengthOfMonth();
+            
+            if (rt.getFrequency() == RecurringTransaction.Frequency.MONTHLY) {
+                LocalDate transactionDate = LocalDate.of(yearMonth.getYear(), yearMonth.getMonthValue(), 
+                    Math.min(rt.getDayOfMonth(), daysInMonth));
+                
+                if (!transactionDate.isBefore(rt.getStartDate()) && 
+                    (endDate == null || !transactionDate.isAfter(endDate))) {
+                    
+                    if (rt.getType() == RecurringTransaction.TransactionType.INCOME) {
+                        Income income = new Income();
+                        income.setUser(rt.getUser());
+                        income.setSource(rt.getName());
+                        income.setAmount(rt.getAmount());
+                        income.setCategory(rt.getCategory());
+                        income.setIncomeDate(transactionDate);
+                        income.setDescription(rt.getDescription());
+                        income.setIsRecurring(true);
+                        income.setRecurringTransactionId(rt.getId());
+                        incomeRepository.save(income);
+                    } else {
+                        Expense expense = new Expense();
+                        expense.setUser(rt.getUser());
+                        expense.setName(rt.getName());
+                        expense.setAmount(rt.getAmount());
+                        expense.setCategory(rt.getCategory());
+                        expense.setExpenseDate(transactionDate);
+                        expense.setDescription(rt.getDescription());
+                        expense.setIsRecurring(true);
+                        expense.setRecurringTransactionId(rt.getId());
+                        expenseRepository.save(expense);
+                    }
+                }
+            }
+        }
+    }
+
+    @Transactional
+    public void deleteExistingRecurringEntries(Long recurringTransactionId) {
+        List<Income> incomes = incomeRepository.findByRecurringTransactionId(recurringTransactionId);
+        incomeRepository.deleteAll(incomes);
+        
+        List<Expense> expenses = expenseRepository.findByRecurringTransactionId(recurringTransactionId);
+        expenseRepository.deleteAll(expenses);
     }
 
     private RecurringTransactionDto convertToDto(RecurringTransaction entity) {
