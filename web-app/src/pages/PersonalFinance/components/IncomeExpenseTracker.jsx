@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { incomeAPI, expenseAPI, categoryAPI, recurringTransactionAPI } from '../../../services/api';
+import { incomeAPI, expenseAPI, categoryAPI, recurringTransactionAPI, monthlyBalanceAPI } from '../../../services/api';
 
 const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onViewChange }) => {
   const [view, setView] = useState(initialView);
@@ -14,6 +14,11 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
       onViewChange(newView);
     }
   };
+
+  const now = new Date();
+  const [selectedMonth, setSelectedMonth] = useState(now.getMonth() + 1);
+  const [selectedYear, setSelectedYear] = useState(now.getFullYear());
+  const [monthlyBalance, setMonthlyBalance] = useState(null);
 
   const [incomeData, setIncomeData] = useState([]);
   const [expenseData, setExpenseData] = useState([]);
@@ -64,6 +69,10 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
     fetchData();
   }, [userId]);
 
+  useEffect(() => {
+    fetchMonthlyBalance();
+  }, [selectedMonth, selectedYear]);
+
   const fetchData = async () => {
     setLoading(true);
     setError(null);
@@ -90,6 +99,40 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchMonthlyBalance = async () => {
+    try {
+      const response = await monthlyBalanceAPI.getMonthlyBalance(selectedYear, selectedMonth);
+      setMonthlyBalance(response.data);
+    } catch (err) {
+      console.error('Failed to fetch monthly balance:', err);
+      setMonthlyBalance(null);
+    }
+  };
+
+  const handlePreviousMonth = () => {
+    if (selectedMonth === 1) {
+      setSelectedMonth(12);
+      setSelectedYear(selectedYear - 1);
+    } else {
+      setSelectedMonth(selectedMonth - 1);
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (selectedMonth === 12) {
+      setSelectedMonth(1);
+      setSelectedYear(selectedYear + 1);
+    } else {
+      setSelectedMonth(selectedMonth + 1);
+    }
+  };
+
+  const getMonthName = (month) => {
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                    'July', 'August', 'September', 'October', 'November', 'December'];
+    return months[month - 1];
   };
 
   const handleAddIncome = async (e) => {
@@ -325,7 +368,7 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
         expense: 0,
         type: 'income',
         id: item.id,
-        isRecurring: false
+        isRecurring: item.isRecurring || false
       })),
       ...expenseData.map(item => ({
         date: new Date(item.expenseDate),
@@ -335,7 +378,7 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
         expense: item.amount,
         type: 'expense',
         id: item.id,
-        isRecurring: false
+        isRecurring: item.isRecurring || false
       })),
       ...recurringTransactions
         .filter(rt => rt.isActive)
@@ -421,13 +464,47 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
       </div>
 
       {view === 'ledger-overview' && (
-        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-          <div className="bg-purple-500 text-white px-6 py-4">
-            <h4 className="text-xl font-bold">Transaction Ledger</h4>
-            <p className="text-sm text-purple-100 mt-1">Complete view of all income and expenses</p>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between bg-white border border-gray-200 rounded-lg px-6 py-4">
+            <button
+              onClick={handlePreviousMonth}
+              className="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg font-medium hover:bg-purple-200 transition-colors"
+            >
+              ← Previous Month
+            </button>
+            <h4 className="text-xl font-bold text-gray-800">
+              {getMonthName(selectedMonth)} {selectedYear}
+            </h4>
+            <button
+              onClick={handleNextMonth}
+              className="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg font-medium hover:bg-purple-200 transition-colors"
+            >
+              Next Month →
+            </button>
           </div>
-          
-          <div className="overflow-x-auto">
+
+          {monthlyBalance && (
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p className="text-sm text-blue-600 font-medium mb-1">Opening Balance</p>
+                <p className="text-2xl font-bold text-blue-700">${monthlyBalance.openingBalance?.toFixed(2) || '0.00'}</p>
+                <p className="text-xs text-blue-500 mt-1">Carried from previous month</p>
+              </div>
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <p className="text-sm text-green-600 font-medium mb-1">Projected Closing Balance</p>
+                <p className="text-2xl font-bold text-green-700">${monthlyBalance.closingBalance?.toFixed(2) || '0.00'}</p>
+                <p className="text-xs text-green-500 mt-1">Will carry to next month</p>
+              </div>
+            </div>
+          )}
+
+          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <div className="bg-purple-500 text-white px-6 py-4">
+              <h4 className="text-xl font-bold">Transaction Ledger</h4>
+              <p className="text-sm text-purple-100 mt-1">Complete view of all income and expenses</p>
+            </div>
+            
+            <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
@@ -518,6 +595,7 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
             </table>
           </div>
         </div>
+        </div>
       )}
 
       {view === 'summary' && (
@@ -558,8 +636,9 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
                       </tr>
                     ) : (
                       incomeData.map((item) => (
-                        <tr key={item.id} className="hover:bg-gray-50">
+                        <tr key={item.id} className={`hover:bg-gray-50 ${item.isRecurring ? 'bg-blue-50' : ''}`}>
                           <td className="px-4 py-3 text-sm text-gray-900">
+                            {item.isRecurring && <span className="text-blue-500 mr-1" title="Recurring transaction">↻</span>}
                             {new Date(item.incomeDate).toLocaleDateString()}
                           </td>
                           <td className="px-4 py-3 text-sm">
@@ -613,8 +692,9 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
                       </tr>
                     ) : (
                       expenseData.map((item) => (
-                        <tr key={item.id} className="hover:bg-gray-50">
+                        <tr key={item.id} className={`hover:bg-gray-50 ${item.isRecurring ? 'bg-blue-50' : ''}`}>
                           <td className="px-4 py-3 text-sm text-gray-900">
+                            {item.isRecurring && <span className="text-blue-500 mr-1" title="Recurring transaction">↻</span>}
                             {new Date(item.expenseDate).toLocaleDateString()}
                           </td>
                           <td className="px-4 py-3 text-sm">
