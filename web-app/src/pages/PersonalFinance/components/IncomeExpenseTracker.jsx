@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { incomeAPI, expenseAPI, categoryAPI } from '../../../services/api';
+import { incomeAPI, expenseAPI, categoryAPI, recurringTransactionAPI } from '../../../services/api';
 
 const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onViewChange }) => {
   const [view, setView] = useState(initialView);
@@ -14,8 +14,10 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
       onViewChange(newView);
     }
   };
+
   const [incomeData, setIncomeData] = useState([]);
   const [expenseData, setExpenseData] = useState([]);
+  const [recurringTransactions, setRecurringTransactions] = useState([]);
   const [categories, setCategories] = useState({ income: [], expense: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,6 +38,26 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
     description: ''
   });
 
+  const [isRecurringIncome, setIsRecurringIncome] = useState(false);
+  const [isRecurringExpense, setIsRecurringExpense] = useState(false);
+
+  const [recurringFormIncome, setRecurringFormIncome] = useState({
+    frequency: 'MONTHLY',
+    dayOfMonth: '1',
+    startDate: new Date().toISOString().split('T')[0],
+    endDate: ''
+  });
+
+  const [recurringFormExpense, setRecurringFormExpense] = useState({
+    frequency: 'MONTHLY',
+    dayOfMonth: '1',
+    startDate: new Date().toISOString().split('T')[0],
+    endDate: ''
+  });
+
+  const [editingRecurringId, setEditingRecurringId] = useState(null);
+  const [editingRecurringForm, setEditingRecurringForm] = useState(null);
+
   const [newCategory, setNewCategory] = useState({ name: '', type: '' });
 
   useEffect(() => {
@@ -46,14 +68,16 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
     setLoading(true);
     setError(null);
     try {
-      const [incomeRes, expenseRes, categoriesRes] = await Promise.all([
+      const [incomeRes, expenseRes, categoriesRes, recurringRes] = await Promise.all([
         incomeAPI.getByUserId(userId),
         expenseAPI.getByUserId(userId),
-        categoryAPI.getByUserId(userId)
+        categoryAPI.getByUserId(userId),
+        recurringTransactionAPI.getByUser(userId)
       ]);
 
       setIncomeData(incomeRes.data || []);
       setExpenseData(expenseRes.data || []);
+      setRecurringTransactions(recurringRes.data || []);
       
       const cats = categoriesRes.data || [];
       setCategories({
@@ -71,17 +95,41 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
   const handleAddIncome = async (e) => {
     e.preventDefault();
     try {
-      await incomeAPI.create({
-        ...incomeForm,
-        userId,
-        amount: parseFloat(incomeForm.amount)
-      });
+      if (isRecurringIncome) {
+        await recurringTransactionAPI.create({
+          userId,
+          type: 'INCOME',
+          name: incomeForm.source,
+          amount: parseFloat(incomeForm.amount),
+          category: incomeForm.category,
+          frequency: recurringFormIncome.frequency,
+          dayOfMonth: parseInt(recurringFormIncome.dayOfMonth),
+          startDate: recurringFormIncome.startDate,
+          endDate: recurringFormIncome.endDate || null,
+          isActive: true,
+          description: incomeForm.description
+        });
+      } else {
+        await incomeAPI.create({
+          ...incomeForm,
+          userId,
+          amount: parseFloat(incomeForm.amount)
+        });
+      }
+      
       setIncomeForm({
         source: '',
         amount: '',
         category: '',
         incomeDate: new Date().toISOString().split('T')[0],
         description: ''
+      });
+      setIsRecurringIncome(false);
+      setRecurringFormIncome({
+        frequency: 'MONTHLY',
+        dayOfMonth: '1',
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: ''
       });
       fetchData();
       handleViewChange('ledger-overview');
@@ -94,17 +142,41 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
   const handleAddExpense = async (e) => {
     e.preventDefault();
     try {
-      await expenseAPI.create({
-        ...expenseForm,
-        userId,
-        amount: parseFloat(expenseForm.amount)
-      });
+      if (isRecurringExpense) {
+        await recurringTransactionAPI.create({
+          userId,
+          type: 'EXPENSE',
+          name: expenseForm.name,
+          amount: parseFloat(expenseForm.amount),
+          category: expenseForm.category,
+          frequency: recurringFormExpense.frequency,
+          dayOfMonth: parseInt(recurringFormExpense.dayOfMonth),
+          startDate: recurringFormExpense.startDate,
+          endDate: recurringFormExpense.endDate || null,
+          isActive: true,
+          description: expenseForm.description
+        });
+      } else {
+        await expenseAPI.create({
+          ...expenseForm,
+          userId,
+          amount: parseFloat(expenseForm.amount)
+        });
+      }
+      
       setExpenseForm({
         name: '',
         amount: '',
         category: '',
         expenseDate: new Date().toISOString().split('T')[0],
         description: ''
+      });
+      setIsRecurringExpense(false);
+      setRecurringFormExpense({
+        frequency: 'MONTHLY',
+        dayOfMonth: '1',
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: ''
       });
       fetchData();
       handleViewChange('ledger-overview');
@@ -157,6 +229,72 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
     }
   };
 
+  const handleEditRecurring = (transaction) => {
+    setEditingRecurringId(transaction.id);
+    setEditingRecurringForm({
+      type: transaction.type,
+      name: transaction.name,
+      amount: transaction.amount.toString(),
+      category: transaction.category,
+      frequency: transaction.frequency,
+      dayOfMonth: transaction.dayOfMonth.toString(),
+      startDate: transaction.startDate,
+      endDate: transaction.endDate || '',
+      isActive: transaction.isActive,
+      description: transaction.description || ''
+    });
+  };
+
+  const handleUpdateRecurring = async (e) => {
+    e.preventDefault();
+    try {
+      await recurringTransactionAPI.update(editingRecurringId, {
+        userId,
+        type: editingRecurringForm.type,
+        name: editingRecurringForm.name,
+        amount: parseFloat(editingRecurringForm.amount),
+        category: editingRecurringForm.category,
+        frequency: editingRecurringForm.frequency,
+        dayOfMonth: parseInt(editingRecurringForm.dayOfMonth),
+        startDate: editingRecurringForm.startDate,
+        endDate: editingRecurringForm.endDate || null,
+        isActive: editingRecurringForm.isActive,
+        description: editingRecurringForm.description
+      });
+      setEditingRecurringId(null);
+      setEditingRecurringForm(null);
+      fetchData();
+    } catch (err) {
+      console.error('Failed to update recurring transaction:', err);
+      alert('Failed to update recurring transaction');
+    }
+  };
+
+  const handleDeleteRecurring = async (id) => {
+    if (window.confirm('Are you sure you want to delete this recurring transaction?')) {
+      try {
+        await recurringTransactionAPI.delete(id);
+        fetchData();
+      } catch (err) {
+        console.error('Failed to delete recurring transaction:', err);
+        alert('Failed to delete recurring transaction');
+      }
+    }
+  };
+
+  const handleToggleActive = async (transaction) => {
+    try {
+      await recurringTransactionAPI.update(transaction.id, {
+        ...transaction,
+        isActive: !transaction.isActive
+      });
+      fetchData();
+    } catch (err) {
+      console.error('Failed to toggle active status:', err);
+      alert('Failed to toggle active status');
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -177,7 +315,6 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
   const totalExpense = expenseData.reduce((sum, item) => sum + item.amount, 0);
   const finalBalance = totalIncome - totalExpense;
 
-  // Merge income and expense data for ledger view
   const getLedgerTransactions = () => {
     const transactions = [
       ...incomeData.map(item => ({
@@ -200,10 +337,8 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
       }))
     ];
     
-    // Sort by date (newest first)
     transactions.sort((a, b) => b.date - a.date);
     
-    // Calculate running balance
     let runningBalance = 0;
     for (let i = transactions.length - 1; i >= 0; i--) {
       runningBalance += transactions[i].income - transactions[i].expense;
@@ -237,6 +372,16 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
             }`}
           >
             📊 Summary
+          </button>
+          <button
+            onClick={() => handleViewChange('recurring')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              view === 'recurring'
+                ? 'bg-indigo-500 text-white'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            🔄 Recurring
           </button>
           <button
             onClick={() => handleViewChange('add-income')}
@@ -487,6 +632,249 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
         </div>
       )}
 
+      {view === 'recurring' && (
+        <div className="space-y-6">
+          {editingRecurringId && editingRecurringForm && (
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <h4 className="text-xl font-bold text-gray-800 mb-4">Edit Recurring Transaction</h4>
+              <form onSubmit={handleUpdateRecurring} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
+                    <select
+                      required
+                      value={editingRecurringForm.type}
+                      onChange={(e) => setEditingRecurringForm({ ...editingRecurringForm, type: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="INCOME">Income</option>
+                      <option value="EXPENSE">Expense</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Frequency</label>
+                    <select
+                      required
+                      value={editingRecurringForm.frequency}
+                      onChange={(e) => setEditingRecurringForm({ ...editingRecurringForm, frequency: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="MONTHLY">Monthly</option>
+                      <option value="WEEKLY">Weekly</option>
+                      <option value="YEARLY">Yearly</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingRecurringForm.name}
+                    onChange={(e) => setEditingRecurringForm({ ...editingRecurringForm, name: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Amount</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      required
+                      value={editingRecurringForm.amount}
+                      onChange={(e) => setEditingRecurringForm({ ...editingRecurringForm, amount: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                    <select
+                      required
+                      value={editingRecurringForm.category}
+                      onChange={(e) => setEditingRecurringForm({ ...editingRecurringForm, category: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Select category</option>
+                      {(editingRecurringForm.type === 'INCOME' ? categories.income : categories.expense).map(cat => (
+                        <option key={cat.id} value={cat.name}>{cat.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Day of Month (1-31)</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="31"
+                      required
+                      value={editingRecurringForm.dayOfMonth}
+                      onChange={(e) => setEditingRecurringForm({ ...editingRecurringForm, dayOfMonth: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                    <input
+                      type="date"
+                      required
+                      value={editingRecurringForm.startDate}
+                      onChange={(e) => setEditingRecurringForm({ ...editingRecurringForm, startDate: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">End Date (Optional)</label>
+                    <input
+                      type="date"
+                      value={editingRecurringForm.endDate}
+                      onChange={(e) => setEditingRecurringForm({ ...editingRecurringForm, endDate: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Description (Optional)</label>
+                  <textarea
+                    value={editingRecurringForm.description}
+                    onChange={(e) => setEditingRecurringForm({ ...editingRecurringForm, description: e.target.value })}
+                    rows="2"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={editingRecurringForm.isActive}
+                    onChange={(e) => setEditingRecurringForm({ ...editingRecurringForm, isActive: e.target.checked })}
+                    className="mr-2 w-4 h-4"
+                  />
+                  <label className="text-sm font-medium text-gray-700">Active</label>
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <button
+                    type="submit"
+                    className="flex-1 bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
+                  >
+                    Update Recurring Transaction
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingRecurringId(null);
+                      setEditingRecurringForm(null);
+                    }}
+                    className="px-6 bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <div className="bg-indigo-500 text-white px-6 py-4">
+              <h4 className="text-xl font-bold">Recurring Transactions</h4>
+              <p className="text-sm text-indigo-100 mt-1">Manage your recurring income and expenses</p>
+            </div>
+
+            {recurringTransactions.length === 0 ? (
+              <div className="p-8 text-center text-gray-500">
+                <div className="flex flex-col items-center gap-2">
+                  <span className="text-4xl">🔄</span>
+                  <p className="font-medium">No recurring transactions yet</p>
+                  <p className="text-sm">Add income or expenses with the &quot;Make this recurring&quot; option</p>
+                </div>
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-200">
+                {recurringTransactions.map((transaction) => (
+                  <div
+                    key={transaction.id}
+                    className={`p-4 hover:bg-gray-50 transition-colors ${!transaction.isActive ? 'opacity-60' : ''}`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <span
+                            className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                              transaction.type === 'INCOME'
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-red-100 text-red-800'
+                            }`}
+                          >
+                            {transaction.type}
+                          </span>
+                          <h5 className="font-bold text-gray-800">{transaction.name}</h5>
+                          {!transaction.isActive && (
+                            <span className="px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded">
+                              Inactive
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+                          <div>
+                            <span className="font-medium">Amount:</span> ${transaction.amount.toFixed(2)}
+                          </div>
+                          <div>
+                            <span className="font-medium">Category:</span> {transaction.category}
+                          </div>
+                          <div>
+                            <span className="font-medium">Frequency:</span> {transaction.frequency}
+                          </div>
+                          <div>
+                            <span className="font-medium">Day:</span> {transaction.dayOfMonth} of month
+                          </div>
+                        </div>
+
+                        {transaction.description && (
+                          <p className="mt-2 text-sm text-gray-600 italic">{transaction.description}</p>
+                        )}
+                      </div>
+
+                      <div className="flex gap-2 ml-4">
+                        <button
+                          onClick={() => handleToggleActive(transaction)}
+                          className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+                            transaction.isActive
+                              ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+                              : 'bg-green-100 text-green-700 hover:bg-green-200'
+                          }`}
+                        >
+                          {transaction.isActive ? 'Deactivate' : 'Activate'}
+                        </button>
+                        <button
+                          onClick={() => handleEditRecurring(transaction)}
+                          className="px-3 py-1 bg-blue-100 text-blue-700 rounded text-sm font-medium hover:bg-blue-200 transition-colors"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteRecurring(transaction.id)}
+                          className="px-3 py-1 bg-red-100 text-red-700 rounded text-sm font-medium hover:bg-red-200 transition-colors"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {view === 'add-income' && (
         <div className="max-w-2xl mx-auto bg-white border border-gray-200 rounded-lg p-6">
           <h4 className="text-xl font-bold text-gray-800 mb-6">Add New Income</h4>
@@ -551,16 +939,18 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
-              <input
-                type="date"
-                required
-                value={incomeForm.incomeDate}
-                onChange={(e) => setIncomeForm({ ...incomeForm, incomeDate: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              />
-            </div>
+            {!isRecurringIncome && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                <input
+                  type="date"
+                  required
+                  value={incomeForm.incomeDate}
+                  onChange={(e) => setIncomeForm({ ...incomeForm, incomeDate: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                />
+              </div>
+            )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Description (Optional)</label>
@@ -573,12 +963,81 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
               />
             </div>
 
+            <div className="border-t pt-4">
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  id="isRecurringIncome"
+                  checked={isRecurringIncome}
+                  onChange={(e) => setIsRecurringIncome(e.target.checked)}
+                  className="mr-2 w-4 h-4"
+                />
+                <label htmlFor="isRecurringIncome" className="text-sm font-medium text-gray-700">
+                  Make this recurring
+                </label>
+              </div>
+
+              {isRecurringIncome && (
+                <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 space-y-4">
+                  <h5 className="font-semibold text-indigo-800">Recurring Settings</h5>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Frequency</label>
+                    <select
+                      required
+                      value={recurringFormIncome.frequency}
+                      onChange={(e) => setRecurringFormIncome({ ...recurringFormIncome, frequency: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                    >
+                      <option value="MONTHLY">Monthly</option>
+                      <option value="WEEKLY">Weekly</option>
+                      <option value="YEARLY">Yearly</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Day of Month (1-31)</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="31"
+                      required
+                      value={recurringFormIncome.dayOfMonth}
+                      onChange={(e) => setRecurringFormIncome({ ...recurringFormIncome, dayOfMonth: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                    <input
+                      type="date"
+                      required
+                      value={recurringFormIncome.startDate}
+                      onChange={(e) => setRecurringFormIncome({ ...recurringFormIncome, startDate: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">End Date (Optional)</label>
+                    <input
+                      type="date"
+                      value={recurringFormIncome.endDate}
+                      onChange={(e) => setRecurringFormIncome({ ...recurringFormIncome, endDate: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div className="flex gap-3 pt-4">
               <button
                 type="submit"
                 className="flex-1 bg-green-500 text-white py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors"
               >
-                Add Income
+                {isRecurringIncome ? 'Add Recurring Income' : 'Add Income'}
               </button>
               <button
                 type="button"
@@ -656,16 +1115,18 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
-              <input
-                type="date"
-                required
-                value={expenseForm.expenseDate}
-                onChange={(e) => setExpenseForm({ ...expenseForm, expenseDate: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-              />
-            </div>
+            {!isRecurringExpense && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                <input
+                  type="date"
+                  required
+                  value={expenseForm.expenseDate}
+                  onChange={(e) => setExpenseForm({ ...expenseForm, expenseDate: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                />
+              </div>
+            )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Description (Optional)</label>
@@ -678,12 +1139,81 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
               />
             </div>
 
+            <div className="border-t pt-4">
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  id="isRecurringExpense"
+                  checked={isRecurringExpense}
+                  onChange={(e) => setIsRecurringExpense(e.target.checked)}
+                  className="mr-2 w-4 h-4"
+                />
+                <label htmlFor="isRecurringExpense" className="text-sm font-medium text-gray-700">
+                  Make this recurring
+                </label>
+              </div>
+
+              {isRecurringExpense && (
+                <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 space-y-4">
+                  <h5 className="font-semibold text-indigo-800">Recurring Settings</h5>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Frequency</label>
+                    <select
+                      required
+                      value={recurringFormExpense.frequency}
+                      onChange={(e) => setRecurringFormExpense({ ...recurringFormExpense, frequency: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                    >
+                      <option value="MONTHLY">Monthly</option>
+                      <option value="WEEKLY">Weekly</option>
+                      <option value="YEARLY">Yearly</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Day of Month (1-31)</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="31"
+                      required
+                      value={recurringFormExpense.dayOfMonth}
+                      onChange={(e) => setRecurringFormExpense({ ...recurringFormExpense, dayOfMonth: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                    <input
+                      type="date"
+                      required
+                      value={recurringFormExpense.startDate}
+                      onChange={(e) => setRecurringFormExpense({ ...recurringFormExpense, startDate: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">End Date (Optional)</label>
+                    <input
+                      type="date"
+                      value={recurringFormExpense.endDate}
+                      onChange={(e) => setRecurringFormExpense({ ...recurringFormExpense, endDate: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div className="flex gap-3 pt-4">
               <button
                 type="submit"
                 className="flex-1 bg-red-500 text-white py-3 rounded-lg font-semibold hover:bg-red-600 transition-colors"
               >
-                Add Expense
+                {isRecurringExpense ? 'Add Recurring Expense' : 'Add Expense'}
               </button>
               <button
                 type="button"
