@@ -201,40 +201,40 @@ const NetWorthTracker = ({ userId = 1 }) => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-2xl font-bold text-gray-800">Net Worth Tracker</h3>
+        <h3 className="text-2xl font-bold text-white">Net Worth Tracker</h3>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
+          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
         >
           {showForm ? 'Cancel' : editingAsset ? 'Edit Asset' : '+ Add Asset/Liability'}
         </button>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-800">{error}</p>
+        <div className="bg-red-900/30 border border-red-700 rounded-lg p-4">
+          <p className="text-red-300">{error}</p>
         </div>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-lg p-6">
+        <div className="bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-lg p-6">
           <p className="text-sm opacity-90 mb-1">Current Net Worth</p>
           <p className="text-3xl font-bold">${summary.netWorth?.toFixed(2) || '0.00'}</p>
         </div>
-        <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-lg p-6">
+        <div className="bg-gradient-to-br from-green-600 to-green-700 text-white rounded-lg p-6">
           <p className="text-sm opacity-90 mb-1">Total Assets</p>
           <p className="text-3xl font-bold">${summary.totalAssets?.toFixed(2) || '0.00'}</p>
         </div>
-        <div className="bg-gradient-to-br from-red-500 to-red-600 text-white rounded-lg p-6">
+        <div className="bg-gradient-to-br from-red-600 to-red-700 text-white rounded-lg p-6">
           <p className="text-sm opacity-90 mb-1">Total Liabilities</p>
           <p className="text-3xl font-bold">${summary.totalLiabilities?.toFixed(2) || '0.00'}</p>
         </div>
       </div>
 
       {projectionData.length > 0 && (
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h4 className="text-xl font-bold text-gray-800 mb-4">12-Month Net Worth Projection</h4>
-          <p className="text-sm text-gray-600 mb-4">
+        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+          <h4 className="text-xl font-bold text-white mb-4">12-Month Net Worth Projection</h4>
+          <p className="text-sm text-gray-400 mb-4">
             Based on your recurring income and expenses
           </p>
           
@@ -242,8 +242,8 @@ const NetWorthTracker = ({ userId = 1 }) => {
             <svg width="100%" height={chartHeight + 40} className="overflow-visible">
               <defs>
                 <linearGradient id="areaGradient" x1="0" x2="0" y1="0" y2="1">
-                  <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.3" />
-                  <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.05" />
+                  <stop offset="0%" stopColor="#2563eb" stopOpacity="0.4" />
+                  <stop offset="100%" stopColor="#2563eb" stopOpacity="0.1" />
                 </linearGradient>
               </defs>
               
@@ -270,7 +270,7 @@ const NetWorthTracker = ({ userId = 1 }) => {
                       return `${x}%,${y}`;
                     }).join(' L ')}`}
                     fill="none"
-                    stroke="#3b82f6"
+                    stroke="#2563eb"
                     strokeWidth="2"
                   />
                   
@@ -283,15 +283,15 @@ const NetWorthTracker = ({ userId = 1 }) => {
                           cx={`${x}%`}
                           cy={y}
                           r="4"
-                          fill="#3b82f6"
-                          stroke="white"
+                          fill="#2563eb"
+                          stroke="#1f2937"
                           strokeWidth="2"
                         />
                         <text
                           x={`${x}%`}
                           y={chartHeight + 20}
                           textAnchor="middle"
-                          className="text-xs fill-gray-600"
+                          className="text-xs fill-gray-400"
                         >
                           {p.month.split(' ')[0]}
                         </text>
@@ -302,7 +302,7 @@ const NetWorthTracker = ({ userId = 1 }) => {
               )}
             </svg>
             
-            <div className="absolute top-2 right-2 text-xs text-gray-600">
+            <div className="absolute top-2 right-2 text-xs text-gray-400">
               Peak: ${Math.max(...projectionData.map(p => p.netWorth)).toFixed(0)}
             </div>
           </div>
@@ -310,8 +310,8 @@ const NetWorthTracker = ({ userId = 1 }) => {
       )}
 
       {showForm && (
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h4 className="text-xl font-bold text-gray-800 mb-4">
+        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+          <h4 className="text-xl font-bold text-white mb-4">
             {editingAsset ? 'Edit Asset/Liability' : 'Add Asset/Liability'}
           </h4>
 
@@ -325,7 +325,7 @@ const NetWorthTracker = ({ userId = 1 }) => {
                   onChange={handleInputChange}
                   className="w-4 h-4 text-blue-600"
                 />
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-gray-300">
                   This is an Asset (uncheck for Liability)
                 </span>
               </label>
@@ -333,7 +333,7 @@ const NetWorthTracker = ({ userId = 1 }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Name *
                 </label>
                 <input
@@ -342,20 +342,20 @@ const NetWorthTracker = ({ userId = 1 }) => {
                   value={formData.name}
                   onChange={handleInputChange}
                   placeholder="e.g., Tesla Model 3, House, Car Loan"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-500"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Type *
                 </label>
                 <select
                   name="type"
                   value={formData.type}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 >
                   {assetTypes.map(type => (
@@ -366,7 +366,7 @@ const NetWorthTracker = ({ userId = 1 }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Value ($) *
               </label>
               <input
@@ -377,13 +377,13 @@ const NetWorthTracker = ({ userId = 1 }) => {
                 placeholder="0.00"
                 step="0.01"
                 min="0.01"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-500"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Description
               </label>
               <textarea
@@ -392,21 +392,21 @@ const NetWorthTracker = ({ userId = 1 }) => {
                 onChange={handleInputChange}
                 placeholder="Optional notes about this asset/liability"
                 rows="3"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-500"
               />
             </div>
 
             <div className="flex gap-3">
               <button
                 type="submit"
-                className="flex-1 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
+                className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
               >
                 {editingAsset ? 'Update' : 'Add'} {formData.isAsset ? 'Asset' : 'Liability'}
               </button>
               <button
                 type="button"
                 onClick={resetForm}
-                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                className="px-6 py-3 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors font-medium"
               >
                 Cancel
               </button>
@@ -416,36 +416,36 @@ const NetWorthTracker = ({ userId = 1 }) => {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h4 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
-            <span className="inline-block w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+          <h4 className="text-lg font-bold text-white mb-4 flex items-center">
+            <span className="inline-block w-3 h-3 bg-green-600 rounded-full mr-2"></span>
             Assets
           </h4>
           {assets.filter(a => a.isAsset).length === 0 ? (
-            <p className="text-gray-500 text-sm">No assets added yet</p>
+            <p className="text-gray-400 text-sm">No assets added yet</p>
           ) : (
             <div className="space-y-3">
               {assets.filter(a => a.isAsset).map(asset => (
-                <div key={asset.id} className="flex justify-between items-start p-3 bg-green-50 border border-green-200 rounded-lg">
+                <div key={asset.id} className="flex justify-between items-start p-3 bg-green-900/30 border border-green-700 rounded-lg">
                   <div className="flex-1">
-                    <p className="font-semibold text-gray-800">{asset.name}</p>
-                    <p className="text-xs text-gray-600">{asset.type}</p>
+                    <p className="font-semibold text-white">{asset.name}</p>
+                    <p className="text-xs text-gray-400">{asset.type}</p>
                     {asset.description && (
-                      <p className="text-xs text-gray-500 mt-1">{asset.description}</p>
+                      <p className="text-xs text-gray-400 mt-1">{asset.description}</p>
                     )}
                   </div>
                   <div className="text-right ml-4">
-                    <p className="font-bold text-green-600">${asset.value.toFixed(2)}</p>
+                    <p className="font-bold text-green-400">${asset.value.toFixed(2)}</p>
                     <div className="flex gap-2 mt-1">
                       <button
                         onClick={() => handleEdit(asset)}
-                        className="text-xs text-blue-600 hover:text-blue-800"
+                        className="text-xs text-blue-400 hover:text-blue-300"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(asset.id)}
-                        className="text-xs text-red-600 hover:text-red-800"
+                        className="text-xs text-red-400 hover:text-red-300"
                       >
                         Delete
                       </button>
@@ -457,36 +457,36 @@ const NetWorthTracker = ({ userId = 1 }) => {
           )}
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h4 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
-            <span className="inline-block w-3 h-3 bg-red-500 rounded-full mr-2"></span>
+        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+          <h4 className="text-lg font-bold text-white mb-4 flex items-center">
+            <span className="inline-block w-3 h-3 bg-red-600 rounded-full mr-2"></span>
             Liabilities
           </h4>
           {assets.filter(a => !a.isAsset).length === 0 ? (
-            <p className="text-gray-500 text-sm">No liabilities added yet</p>
+            <p className="text-gray-400 text-sm">No liabilities added yet</p>
           ) : (
             <div className="space-y-3">
               {assets.filter(a => !a.isAsset).map(asset => (
-                <div key={asset.id} className="flex justify-between items-start p-3 bg-red-50 border border-red-200 rounded-lg">
+                <div key={asset.id} className="flex justify-between items-start p-3 bg-red-900/30 border border-red-700 rounded-lg">
                   <div className="flex-1">
-                    <p className="font-semibold text-gray-800">{asset.name}</p>
-                    <p className="text-xs text-gray-600">{asset.type}</p>
+                    <p className="font-semibold text-white">{asset.name}</p>
+                    <p className="text-xs text-gray-400">{asset.type}</p>
                     {asset.description && (
-                      <p className="text-xs text-gray-500 mt-1">{asset.description}</p>
+                      <p className="text-xs text-gray-400 mt-1">{asset.description}</p>
                     )}
                   </div>
                   <div className="text-right ml-4">
-                    <p className="font-bold text-red-600">${asset.value.toFixed(2)}</p>
+                    <p className="font-bold text-red-400">${asset.value.toFixed(2)}</p>
                     <div className="flex gap-2 mt-1">
                       <button
                         onClick={() => handleEdit(asset)}
-                        className="text-xs text-blue-600 hover:text-blue-800"
+                        className="text-xs text-blue-400 hover:text-blue-300"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(asset.id)}
-                        className="text-xs text-red-600 hover:text-red-800"
+                        className="text-xs text-red-400 hover:text-red-300"
                       >
                         Delete
                       </button>

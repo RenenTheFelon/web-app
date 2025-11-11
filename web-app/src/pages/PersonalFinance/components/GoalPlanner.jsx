@@ -124,13 +124,13 @@ const GoalPlanner = ({ userId = 1 }) => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'IN_PROGRESS':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-900/30 text-blue-400';
       case 'COMPLETED':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-900/30 text-green-400';
       case 'CANCELLED':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-700 text-gray-300';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-700 text-gray-300';
     }
   };
 
@@ -153,30 +153,30 @@ const GoalPlanner = ({ userId = 1 }) => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-2xl font-bold text-gray-800">Financial Goals</h3>
+        <h3 className="text-2xl font-bold text-white">Financial Goals</h3>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
+          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
         >
           {showForm ? 'Cancel' : '+ New Goal'}
         </button>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-800">{error}</p>
+        <div className="bg-red-900/30 border border-red-700 rounded-lg p-4">
+          <p className="text-red-300">{error}</p>
         </div>
       )}
 
       {showForm && (
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h4 className="text-xl font-bold text-gray-800 mb-4">
+        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+          <h4 className="text-xl font-bold text-white mb-4">
             {editingId ? 'Edit Goal' : 'Create New Goal'}
           </h4>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Goal Name *
               </label>
               <input
@@ -185,14 +185,14 @@ const GoalPlanner = ({ userId = 1 }) => {
                 value={formData.name}
                 onChange={handleInputChange}
                 placeholder="e.g., Emergency Fund, Vacation, Down Payment"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Target Amount ($) *
                 </label>
                 <input
@@ -203,13 +203,13 @@ const GoalPlanner = ({ userId = 1 }) => {
                   placeholder="0.00"
                   step="0.01"
                   min="0.01"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Current Amount ($)
                 </label>
                 <input
@@ -220,14 +220,14 @@ const GoalPlanner = ({ userId = 1 }) => {
                   placeholder="0.00"
                   step="0.01"
                   min="0"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Target Date *
                 </label>
                 <input
@@ -235,20 +235,20 @@ const GoalPlanner = ({ userId = 1 }) => {
                   name="targetDate"
                   value={formData.targetDate}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Status
                 </label>
                 <select
                   name="status"
                   value={formData.status}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="IN_PROGRESS">In Progress</option>
                   <option value="COMPLETED">Completed</option>
@@ -258,7 +258,7 @@ const GoalPlanner = ({ userId = 1 }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Description
               </label>
               <textarea
@@ -267,21 +267,21 @@ const GoalPlanner = ({ userId = 1 }) => {
                 onChange={handleInputChange}
                 placeholder="Why is this goal important to you?"
                 rows="3"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
 
             <div className="flex gap-3">
               <button
                 type="submit"
-                className="flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors font-medium"
+                className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
               >
                 {editingId ? 'Update Goal' : 'Create Goal'}
               </button>
               <button
                 type="button"
                 onClick={resetForm}
-                className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                className="px-6 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition-colors font-medium"
               >
                 Cancel
               </button>
@@ -292,8 +292,8 @@ const GoalPlanner = ({ userId = 1 }) => {
 
       <div className="space-y-4">
         {goals.length === 0 ? (
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
-            <p className="text-gray-600">No goals yet. Create your first financial goal!</p>
+          <div className="bg-gray-900 border border-gray-700 rounded-lg p-8 text-center">
+            <p className="text-gray-400">No goals yet. Create your first financial goal!</p>
           </div>
         ) : (
           goals.map(goal => {
@@ -302,21 +302,21 @@ const GoalPlanner = ({ userId = 1 }) => {
             const isOverdue = daysRemaining < 0 && goal.status === 'IN_PROGRESS';
 
             return (
-              <div key={goal.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+              <div key={goal.id} className="bg-gray-800 border border-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h4 className="text-xl font-bold text-gray-800">{goal.name}</h4>
+                      <h4 className="text-xl font-bold text-white">{goal.name}</h4>
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(goal.status)}`}>
                         {goal.status.replace('_', ' ')}
                       </span>
                     </div>
                     {goal.description && (
-                      <p className="text-sm text-gray-600 mb-2">{goal.description}</p>
+                      <p className="text-sm text-gray-400 mb-2">{goal.description}</p>
                     )}
-                    <div className="flex gap-4 text-sm text-gray-600">
+                    <div className="flex gap-4 text-sm text-gray-400">
                       <span>Target: {goal.targetDate}</span>
-                      <span className={isOverdue ? 'text-red-600 font-medium' : ''}>
+                      <span className={isOverdue ? 'text-red-400 font-medium' : ''}>
                         {daysRemaining >= 0 ? `${daysRemaining} days remaining` : `${Math.abs(daysRemaining)} days overdue`}
                       </span>
                     </div>
@@ -324,13 +324,13 @@ const GoalPlanner = ({ userId = 1 }) => {
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleEdit(goal)}
-                      className="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors text-sm font-medium"
+                      className="px-3 py-1 bg-blue-900/30 text-blue-400 rounded hover:bg-blue-900/50 transition-colors text-sm font-medium"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(goal.id)}
-                      className="px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors text-sm font-medium"
+                      className="px-3 py-1 bg-red-900/30 text-red-400 rounded hover:bg-red-900/50 transition-colors text-sm font-medium"
                     >
                       Delete
                     </button>
@@ -339,14 +339,14 @@ const GoalPlanner = ({ userId = 1 }) => {
 
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-700">
+                    <span className="text-sm font-medium text-gray-300">
                       ${goal.currentAmount.toFixed(2)} / ${goal.targetAmount.toFixed(2)}
                     </span>
-                    <span className="text-sm font-bold text-blue-600">
+                    <span className="text-sm font-bold text-blue-400">
                       {progress.toFixed(1)}%
                     </span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                  <div className="w-full bg-gray-700 rounded-full h-4 overflow-hidden">
                     <div
                       className={`h-full transition-all duration-500 ${
                         progress >= 100 ? 'bg-green-500' : progress >= 75 ? 'bg-blue-500' : progress >= 50 ? 'bg-yellow-500' : 'bg-orange-500'
@@ -354,7 +354,7 @@ const GoalPlanner = ({ userId = 1 }) => {
                       style={{ width: `${progress}%` }}
                     />
                   </div>
-                  <div className="text-xs text-gray-600">
+                  <div className="text-xs text-gray-400">
                     ${(goal.targetAmount - goal.currentAmount).toFixed(2)} remaining to reach goal
                   </div>
                 </div>
