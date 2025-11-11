@@ -1,6 +1,8 @@
 package com.wealthwise.finance.repository;
 
 import com.wealthwise.finance.entity.MonthlyBalance;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,9 +17,9 @@ public interface MonthlyBalanceRepository extends JpaRepository<MonthlyBalance, 
     
     List<MonthlyBalance> findByUserIdOrderByYearDescMonthDesc(Long userId);
     
-    @Query("SELECT mb FROM MonthlyBalance mb WHERE mb.user.id = :userId " +
+    @Query(value = "SELECT * FROM monthly_balances mb WHERE mb.user_id = :userId " +
            "AND (mb.year < :year OR (mb.year = :year AND mb.month < :month)) " +
-           "ORDER BY mb.year DESC, mb.month DESC")
+           "ORDER BY mb.year DESC, mb.month DESC LIMIT 1", nativeQuery = true)
     Optional<MonthlyBalance> findFirstByUserIdAndYearAndMonthBefore(@Param("userId") Long userId, 
                                                                       @Param("year") Integer year, 
                                                                       @Param("month") Integer month);
