@@ -46,14 +46,14 @@ const PersonalFinance = () => {
   };
 
   return (
-    <section className="min-h-screen bg-gray-50 p-6">
+    <section className="min-h-screen bg-gray-950 p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h2 className="text-4xl font-bold text-gray-900 mb-2">Personal Finance Manager</h2>
-          <p className="text-gray-600">Take control of your finances with our comprehensive tools</p>
+          <h2 className="text-4xl font-bold text-white mb-2">Personal Finance Manager</h2>
+          <p className="text-gray-400">Take control of your finances with our comprehensive tools</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6 overflow-hidden">
+        <div className="bg-gray-900 rounded-lg shadow-lg border border-gray-800 mb-6 overflow-hidden">
           <div className="flex overflow-x-auto">
             {tabs.map(tab => (
               <button
@@ -61,8 +61,8 @@ const PersonalFinance = () => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex-shrink-0 px-6 py-4 font-medium transition-all duration-200 border-b-2 whitespace-nowrap ${
                   activeTab === tab.id
-                    ? 'text-blue-600 border-blue-600 bg-blue-50'
-                    : 'text-gray-600 border-transparent hover:text-gray-900 hover:bg-gray-50'
+                    ? 'text-blue-400 border-blue-500 bg-gray-800'
+                    : 'text-gray-400 border-transparent hover:text-gray-200 hover:bg-gray-800'
                 }`}
               >
                 <span className="mr-2">{tab.icon}</span>
@@ -72,7 +72,7 @@ const PersonalFinance = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-gray-900 rounded-lg shadow-lg border border-gray-800 p-6">
           {renderContent()}
         </div>
       </div>

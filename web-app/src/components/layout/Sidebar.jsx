@@ -10,15 +10,15 @@ const Sidebar = () => {
 
   const linkClass = ({ isActive }) =>
     `block px-4 py-2 rounded-md transition ${
-      isActive ? "bg-blue-500 text-white" : "hover:bg-blue-100"
+      isActive ? "bg-blue-600 text-white" : "text-gray-300 hover:bg-gray-800"
     }`
 
   return (
-    <aside className="w-64 min-h-screen bg-white border-r shadow-sm">
-      <div className="p-4 border-b">
-        <h1 className="text-xl font-bold text-blue-700">RenenSomesh</h1>
+    <aside className="w-64 min-h-screen bg-gray-900 border-r border-gray-800 shadow-sm">
+      <div className="p-4 border-b border-gray-800">
+        <h1 className="text-xl font-bold text-blue-400">RenenSomesh</h1>
       </div>
-      <nav className="p-4 space-y-2 text-gray-700">
+      <nav className="p-4 space-y-2 text-gray-300">
         {/* Home */}
         <NavLink to="/" className={linkClass}>
           Home
@@ -28,7 +28,7 @@ const Sidebar = () => {
         <div>
           <button
             onClick={() => toggleMenu("learn")}
-            className="w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition font-medium"
+            className="w-full text-left px-4 py-2 rounded-md hover:bg-gray-800 transition font-medium"
           >
             Learn
           </button>
@@ -45,7 +45,7 @@ const Sidebar = () => {
         <div>
           <button
             onClick={() => toggleMenu("products")}
-            className="w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition font-medium"
+            className="w-full text-left px-4 py-2 rounded-md hover:bg-gray-800 transition font-medium"
           >
             Products
           </button>
@@ -65,7 +65,7 @@ const Sidebar = () => {
         <div>
           <button
             onClick={() => toggleMenu("finance")}
-            className="w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition font-medium"
+            className="w-full text-left px-4 py-2 rounded-md hover:bg-gray-800 transition font-medium"
           >
             Personal Finance
           </button>

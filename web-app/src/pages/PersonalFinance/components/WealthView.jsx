@@ -135,15 +135,15 @@ const WealthView = ({ userId = 1, onAddIncome, onAddExpense }) => {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="text-lg">Loading calendar...</div>
+        <div className="text-lg text-gray-300">Loading calendar...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <p className="text-red-800">{error}</p>
+      <div className="bg-red-900/30 border border-red-700 rounded-lg p-4">
+        <p className="text-red-300">{error}</p>
       </div>
     );
   }
@@ -151,17 +151,17 @@ const WealthView = ({ userId = 1, onAddIncome, onAddExpense }) => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-2xl font-bold text-gray-800">WealthView - {monthName}</h3>
+        <h3 className="text-2xl font-bold text-white">WealthView - {monthName}</h3>
         <div className="flex gap-2">
           <button
             onClick={previousMonth}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             Previous
           </button>
           <button
             onClick={nextMonth}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             Next
           </button>
@@ -169,17 +169,17 @@ const WealthView = ({ userId = 1, onAddIncome, onAddExpense }) => {
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-4">
-        <div className="bg-purple-50 border-2 border-purple-200 rounded-lg p-4">
-          <p className="text-sm text-purple-600 font-medium">Opening Balance</p>
-          <p className="text-2xl font-bold text-purple-700">${monthlyBalance.openingBalance.toFixed(2)}</p>
+        <div className="bg-purple-900/30 border-2 border-purple-700 rounded-lg p-4">
+          <p className="text-sm text-purple-400 font-medium">Opening Balance</p>
+          <p className="text-2xl font-bold text-purple-300">${monthlyBalance.openingBalance.toFixed(2)}</p>
           <p className="text-xs text-purple-500 mt-1">Carried from previous month</p>
         </div>
         
-        <div className={`${monthlyBalance.closingBalance >= 0 ? 'bg-teal-50 border-teal-200' : 'bg-orange-50 border-orange-200'} border-2 rounded-lg p-4`}>
-          <p className={`text-sm font-medium ${monthlyBalance.closingBalance >= 0 ? 'text-teal-600' : 'text-orange-600'}`}>
+        <div className={`${monthlyBalance.closingBalance >= 0 ? 'bg-teal-900/30 border-teal-700' : 'bg-orange-900/30 border-orange-700'} border-2 rounded-lg p-4`}>
+          <p className={`text-sm font-medium ${monthlyBalance.closingBalance >= 0 ? 'text-teal-400' : 'text-orange-400'}`}>
             Closing Balance
           </p>
-          <p className={`text-2xl font-bold ${monthlyBalance.closingBalance >= 0 ? 'text-teal-700' : 'text-orange-700'}`}>
+          <p className={`text-2xl font-bold ${monthlyBalance.closingBalance >= 0 ? 'text-teal-300' : 'text-orange-300'}`}>
             ${monthlyBalance.closingBalance.toFixed(2)}
           </p>
           <p className={`text-xs mt-1 ${monthlyBalance.closingBalance >= 0 ? 'text-teal-500' : 'text-orange-500'}`}>
@@ -191,38 +191,38 @@ const WealthView = ({ userId = 1, onAddIncome, onAddExpense }) => {
       <div className="grid grid-cols-3 gap-4">
         <button
           onClick={onAddIncome}
-          className="bg-green-50 border-2 border-green-200 rounded-lg p-4 hover:bg-green-100 hover:border-green-300 transition-all cursor-pointer text-left"
+          className="bg-green-900/30 border-2 border-green-700 rounded-lg p-4 hover:bg-green-900/50 hover:border-green-600 transition-all cursor-pointer text-left"
         >
-          <p className="text-sm text-green-600 font-medium flex items-center gap-2">
+          <p className="text-sm text-green-400 font-medium flex items-center gap-2">
             <span className="text-xl">➕</span> Total Income (Click to Add)
           </p>
-          <p className="text-2xl font-bold text-green-700">${monthlyTotals.income.toFixed(2)}</p>
+          <p className="text-2xl font-bold text-green-300">${monthlyTotals.income.toFixed(2)}</p>
         </button>
         
         <button
           onClick={onAddExpense}
-          className="bg-red-50 border-2 border-red-200 rounded-lg p-4 hover:bg-red-100 hover:border-red-300 transition-all cursor-pointer text-left"
+          className="bg-red-900/30 border-2 border-red-700 rounded-lg p-4 hover:bg-red-900/50 hover:border-red-600 transition-all cursor-pointer text-left"
         >
-          <p className="text-sm text-red-600 font-medium flex items-center gap-2">
+          <p className="text-sm text-red-400 font-medium flex items-center gap-2">
             <span className="text-xl">➖</span> Total Expense (Click to Add)
           </p>
-          <p className="text-2xl font-bold text-red-700">${monthlyTotals.expenses.toFixed(2)}</p>
+          <p className="text-2xl font-bold text-red-300">${monthlyTotals.expenses.toFixed(2)}</p>
         </button>
         
-        <div className={`${monthlyTotals.savings >= 0 ? 'bg-blue-50 border-blue-200' : 'bg-orange-50 border-orange-200'} border-2 rounded-lg p-4`}>
-          <p className={`text-sm font-medium ${monthlyTotals.savings >= 0 ? 'text-blue-600' : 'text-orange-600'}`}>
+        <div className={`${monthlyTotals.savings >= 0 ? 'bg-blue-900/30 border-blue-700' : 'bg-orange-900/30 border-orange-700'} border-2 rounded-lg p-4`}>
+          <p className={`text-sm font-medium ${monthlyTotals.savings >= 0 ? 'text-blue-400' : 'text-orange-400'}`}>
             Net Savings
           </p>
-          <p className={`text-2xl font-bold ${monthlyTotals.savings >= 0 ? 'text-blue-700' : 'text-orange-700'}`}>
+          <p className={`text-2xl font-bold ${monthlyTotals.savings >= 0 ? 'text-blue-300' : 'text-orange-300'}`}>
             ${monthlyTotals.savings.toFixed(2)}
           </p>
         </div>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-        <div className="grid grid-cols-7 bg-gray-100">
+      <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
+        <div className="grid grid-cols-7 bg-gray-900">
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-            <div key={day} className="p-3 text-center font-semibold text-gray-700 border-r border-gray-200 last:border-r-0">
+            <div key={day} className="p-3 text-center font-semibold text-gray-300 border-r border-gray-700 last:border-r-0">
               {day}
             </div>
           ))}
@@ -230,7 +230,7 @@ const WealthView = ({ userId = 1, onAddIncome, onAddExpense }) => {
         
         <div className="grid grid-cols-7">
           {Array.from({ length: startingDayOfWeek }).map((_, i) => (
-            <div key={`empty-${i}`} className="border-r border-b border-gray-200 p-2 bg-gray-50 min-h-[140px]"></div>
+            <div key={`empty-${i}`} className="border-r border-b border-gray-700 p-2 bg-gray-900/50 min-h-[140px]"></div>
           ))}
           
           {Array.from({ length: daysInMonth }).map((_, i) => {
@@ -240,9 +240,9 @@ const WealthView = ({ userId = 1, onAddIncome, onAddExpense }) => {
             return (
               <div
                 key={day}
-                className="border-r border-b border-gray-200 p-2 min-h-[140px] hover:bg-gray-50 transition-colors"
+                className="border-r border-b border-gray-700 p-2 min-h-[140px] hover:bg-gray-700/30 transition-colors"
               >
-                <div className="font-semibold text-gray-700 mb-2">{day}</div>
+                <div className="font-semibold text-gray-300 mb-2">{day}</div>
                 <div className="space-y-1 max-h-[100px] overflow-y-auto">
                   {dayTransactions.map((transaction, idx) => {
                     const isIncome = transaction.type === 'income';
@@ -252,8 +252,8 @@ const WealthView = ({ userId = 1, onAddIncome, onAddExpense }) => {
                         key={idx}
                         className={`text-xs px-2 py-1 rounded ${
                           isIncome 
-                            ? 'bg-green-100 text-green-800 border border-green-200' 
-                            : 'bg-red-100 text-red-800 border border-red-200'
+                            ? 'bg-green-900/40 text-green-300 border border-green-700' 
+                            : 'bg-red-900/40 text-red-300 border border-red-700'
                         } ${isRecurring ? 'border-dashed border-2' : ''}`}
                       >
                         <div className="font-semibold truncate flex items-center gap-1">
