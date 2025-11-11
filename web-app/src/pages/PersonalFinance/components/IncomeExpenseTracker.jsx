@@ -348,8 +348,8 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <p className="text-red-800">{error}</p>
+      <div className="bg-red-900/30 border border-red-700 rounded-lg p-4">
+        <p className="text-red-400">{error}</p>
       </div>
     );
   }
@@ -415,14 +415,14 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-4">
-        <h3 className="text-2xl font-bold text-gray-800">Income & Expense Tracker</h3>
+        <h3 className="text-2xl font-bold text-white">Income & Expense Tracker</h3>
         <div className="flex gap-2 flex-wrap">
           <button
             onClick={() => handleViewChange('ledger-overview')}
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
               view === 'ledger-overview'
                 ? 'bg-purple-500 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                : 'bg-gray-700 text-gray-300 hover:bg-gray-700/30'
             }`}
           >
             📋 Ledger Overview
@@ -431,8 +431,8 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
             onClick={() => handleViewChange('summary')}
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
               view === 'summary'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-700 text-gray-300 hover:bg-gray-700/30'
             }`}
           >
             📊 Summary
@@ -442,7 +442,7 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
               view === 'recurring'
                 ? 'bg-indigo-500 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                : 'bg-gray-700 text-gray-300 hover:bg-gray-700/30'
             }`}
           >
             🔄 Recurring
@@ -451,8 +451,8 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
             onClick={() => handleViewChange('add-income')}
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
               view === 'add-income'
-                ? 'bg-green-500 text-white'
-                : 'bg-green-100 text-green-700 hover:bg-green-200'
+                ? 'bg-green-600 text-white'
+                : 'bg-green-900/30 text-green-400 hover:bg-green-700'
             }`}
           >
             ➕ Add Income
@@ -461,8 +461,8 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
             onClick={() => handleViewChange('add-expense')}
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
               view === 'add-expense'
-                ? 'bg-red-500 text-white'
-                : 'bg-red-100 text-red-700 hover:bg-red-200'
+                ? 'bg-red-600 text-white'
+                : 'bg-red-900/30 text-red-400 hover:bg-red-700'
             }`}
           >
             ➖ Add Expense
@@ -472,19 +472,19 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
 
       {view === 'ledger-overview' && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between bg-white border border-gray-200 rounded-lg px-6 py-4">
+          <div className="flex items-center justify-between bg-gray-800 border border-gray-700 rounded-lg px-6 py-4">
             <button
               onClick={handlePreviousMonth}
-              className="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg font-medium hover:bg-purple-200 transition-colors"
+              className="px-4 py-2 bg-purple-900/30 text-purple-400 rounded-lg font-medium hover:bg-purple-700/30 transition-colors"
             >
               ← Previous Month
             </button>
-            <h4 className="text-xl font-bold text-gray-800">
+            <h4 className="text-xl font-bold text-white">
               {getMonthName(selectedMonth)} {selectedYear}
             </h4>
             <button
               onClick={handleNextMonth}
-              className="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg font-medium hover:bg-purple-200 transition-colors"
+              className="px-4 py-2 bg-purple-900/30 text-purple-400 rounded-lg font-medium hover:bg-purple-700/30 transition-colors"
             >
               Next Month →
             </button>
@@ -492,20 +492,20 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
 
           {monthlyBalance && (
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-sm text-blue-600 font-medium mb-1">Opening Balance</p>
-                <p className="text-2xl font-bold text-blue-700">${monthlyBalance.openingBalance?.toFixed(2) || '0.00'}</p>
-                <p className="text-xs text-blue-500 mt-1">Carried from previous month</p>
+              <div className="bg-blue-900/30 border border-blue-700 rounded-lg p-4">
+                <p className="text-sm text-blue-400 font-medium mb-1">Opening Balance</p>
+                <p className="text-2xl font-bold text-blue-400">${monthlyBalance.openingBalance?.toFixed(2) || '0.00'}</p>
+                <p className="text-xs text-blue-400 mt-1">Carried from previous month</p>
               </div>
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <p className="text-sm text-green-600 font-medium mb-1">Projected Closing Balance</p>
-                <p className="text-2xl font-bold text-green-700">${monthlyBalance.closingBalance?.toFixed(2) || '0.00'}</p>
-                <p className="text-xs text-green-500 mt-1">Will carry to next month</p>
+              <div className="bg-green-900/30 border border-green-700 rounded-lg p-4">
+                <p className="text-sm text-green-400 font-medium mb-1">Projected Closing Balance</p>
+                <p className="text-2xl font-bold text-green-400">${monthlyBalance.closingBalance?.toFixed(2) || '0.00'}</p>
+                <p className="text-xs text-green-400 mt-1">Will carry to next month</p>
               </div>
             </div>
           )}
 
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
             <div className="bg-purple-500 text-white px-6 py-4">
               <h4 className="text-xl font-bold">Transaction Ledger</h4>
               <p className="text-sm text-purple-100 mt-1">Complete view of all income and expenses</p>
@@ -513,20 +513,20 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
             
             <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-900">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Income (Money In)</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Expense (Money Out)</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Overall Balance</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Date</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Description</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Category</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">Income (Money In)</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">Expense (Money Out)</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">Overall Balance</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-700">
                 {getLedgerTransactions().length === 0 ? (
                   <tr>
-                    <td colSpan="6" className="px-4 py-12 text-center text-gray-500">
+                    <td colSpan="6" className="px-4 py-12 text-center text-gray-400">
                       <div className="flex flex-col items-center gap-2">
                         <span className="text-4xl">📭</span>
                         <p className="font-medium">No transactions yet</p>
@@ -536,39 +536,39 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
                   </tr>
                 ) : (
                   getLedgerTransactions().map((transaction, index) => (
-                    <tr key={`${transaction.type}-${transaction.id}`} className={`hover:bg-gray-50 ${transaction.isRecurring ? 'bg-blue-50 border-l-4 border-l-blue-400' : ''}`}>
-                      <td className="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">
-                        {transaction.isRecurring && <span className="text-blue-500 mr-1" title="Recurring transaction">↻</span>}
+                    <tr key={`${transaction.type}-${transaction.id}`} className={`hover:bg-gray-700/30 ${transaction.isRecurring ? 'bg-blue-900/30 border-l-4 border-l-blue-400' : ''}`}>
+                      <td className="px-4 py-3 text-sm text-gray-100 whitespace-nowrap">
+                        {transaction.isRecurring && <span className="text-blue-400 mr-1" title="Recurring transaction">↻</span>}
                         {transaction.date.toLocaleDateString()}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-700">
+                      <td className="px-4 py-3 text-sm text-gray-300">
                         {transaction.description}
                       </td>
                       <td className="px-4 py-3 text-sm">
                         <span className={`px-2 py-1 rounded text-xs font-medium ${
                           transaction.type === 'income' 
-                            ? 'bg-green-100 text-green-700' 
-                            : 'bg-red-100 text-red-700'
+                            ? 'bg-green-900/30 text-green-400' 
+                            : 'bg-red-900/30 text-red-400'
                         }`}>
                           {transaction.category}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-sm text-right font-semibold">
                         {transaction.income > 0 ? (
-                          <span className="text-green-600">+${transaction.income.toFixed(2)}</span>
+                          <span className="text-green-400">+${transaction.income.toFixed(2)}</span>
                         ) : (
                           <span className="text-gray-300">—</span>
                         )}
                       </td>
                       <td className="px-4 py-3 text-sm text-right font-semibold">
                         {transaction.expense > 0 ? (
-                          <span className="text-red-600">-${transaction.expense.toFixed(2)}</span>
+                          <span className="text-red-400">-${transaction.expense.toFixed(2)}</span>
                         ) : (
                           <span className="text-gray-300">—</span>
                         )}
                       </td>
                       <td className="px-4 py-3 text-sm text-right font-bold">
-                        <span className={transaction.balance >= 0 ? 'text-green-600' : 'text-red-600'}>
+                        <span className={transaction.balance >= 0 ? 'text-green-400' : 'text-red-400'}>
                           ${transaction.balance.toFixed(2)}
                         </span>
                       </td>
@@ -577,21 +577,21 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
                 )}
               </tbody>
               {getLedgerTransactions().length > 0 && (
-                <tfoot className="bg-gray-100 border-t-2 border-gray-300">
+                <tfoot className="bg-gray-800 border-t-2 border-gray-700">
                   <tr className="font-bold">
-                    <td colSpan="3" className="px-4 py-4 text-sm text-gray-700 uppercase tracking-wide">
+                    <td colSpan="3" className="px-4 py-4 text-sm text-gray-300 uppercase tracking-wide">
                       Totals
                     </td>
-                    <td className="px-4 py-4 text-sm text-right text-green-600 font-bold">
+                    <td className="px-4 py-4 text-sm text-right text-green-400 font-bold">
                       +${totalIncome.toFixed(2)}
                     </td>
-                    <td className="px-4 py-4 text-sm text-right text-red-600 font-bold">
+                    <td className="px-4 py-4 text-sm text-right text-red-400 font-bold">
                       -${totalExpense.toFixed(2)}
                     </td>
                     <td className="px-4 py-4 text-sm text-right">
                       <div className="flex flex-col items-end">
-                        <span className="text-xs text-gray-500 uppercase tracking-wide mb-1">Final Balance</span>
-                        <span className={`text-lg font-bold ${finalBalance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <span className="text-xs text-gray-400 uppercase tracking-wide mb-1">Final Balance</span>
+                        <span className={`text-lg font-bold ${finalBalance >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                           ${finalBalance.toFixed(2)}
                         </span>
                       </div>
@@ -608,61 +608,61 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
       {view === 'summary' && (
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <p className="text-sm text-green-600 font-medium">Total Income</p>
-              <p className="text-3xl font-bold text-green-700">${totalIncome.toFixed(2)}</p>
+            <div className="bg-green-900/30 border border-green-700 rounded-lg p-4">
+              <p className="text-sm text-green-400 font-medium">Total Income</p>
+              <p className="text-3xl font-bold text-green-400">${totalIncome.toFixed(2)}</p>
             </div>
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <p className="text-sm text-red-600 font-medium">Total Expense</p>
-              <p className="text-3xl font-bold text-red-700">${totalExpense.toFixed(2)}</p>
+            <div className="bg-red-900/30 border border-red-700 rounded-lg p-4">
+              <p className="text-sm text-red-400 font-medium">Total Expense</p>
+              <p className="text-3xl font-bold text-red-400">${totalExpense.toFixed(2)}</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-              <div className="bg-green-500 text-white px-4 py-3 font-semibold">
+            <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
+              <div className="bg-green-600 text-white px-4 py-3 font-semibold">
                 Income Records ({filteredIncome.length})
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-gray-900">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
-                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Amount</th>
-                      <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Action</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Date</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Category</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Description</th>
+                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase">Amount</th>
+                      <th className="px-4 py-3 text-center text-xs font-medium text-gray-400 uppercase">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200">
+                  <tbody className="divide-y divide-gray-700">
                     {filteredIncome.length === 0 ? (
                       <tr>
-                        <td colSpan="5" className="px-4 py-8 text-center text-gray-500">
+                        <td colSpan="5" className="px-4 py-8 text-center text-gray-400">
                           No income records for this month.
                         </td>
                       </tr>
                     ) : (
                       filteredIncome.map((item) => (
-                        <tr key={item.id} className={`hover:bg-gray-50 ${item.isRecurring ? 'bg-blue-50' : ''}`}>
-                          <td className="px-4 py-3 text-sm text-gray-900">
-                            {item.isRecurring && <span className="text-blue-500 mr-1" title="Recurring transaction">↻</span>}
+                        <tr key={item.id} className={`hover:bg-gray-700/30 ${item.isRecurring ? 'bg-blue-900/30' : ''}`}>
+                          <td className="px-4 py-3 text-sm text-gray-100">
+                            {item.isRecurring && <span className="text-blue-400 mr-1" title="Recurring transaction">↻</span>}
                             {new Date(item.incomeDate).toLocaleDateString()}
                           </td>
                           <td className="px-4 py-3 text-sm">
-                            <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">
+                            <span className="px-2 py-1 bg-green-900/30 text-green-400 rounded text-xs font-medium">
                               {item.category}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-600 truncate max-w-[150px]">
+                          <td className="px-4 py-3 text-sm text-gray-400 truncate max-w-[150px]">
                             {item.description || item.source}
                           </td>
-                          <td className="px-4 py-3 text-sm text-right font-semibold text-green-600">
+                          <td className="px-4 py-3 text-sm text-right font-semibold text-green-400">
                             +${item.amount.toFixed(2)}
                           </td>
                           <td className="px-4 py-3 text-center">
                             <button
                               onClick={() => handleDeleteIncome(item.id)}
-                              className="text-red-500 hover:text-red-700 text-sm font-medium"
+                              className="text-red-400 hover:text-red-400 text-sm font-medium"
                             >
                               Delete
                             </button>
@@ -675,50 +675,50 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
               </div>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-              <div className="bg-red-500 text-white px-4 py-3 font-semibold">
+            <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
+              <div className="bg-red-600 text-white px-4 py-3 font-semibold">
                 Expense Records ({filteredExpense.length})
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-gray-900">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
-                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Amount</th>
-                      <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Action</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Date</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Category</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase">Description</th>
+                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase">Amount</th>
+                      <th className="px-4 py-3 text-center text-xs font-medium text-gray-400 uppercase">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200">
+                  <tbody className="divide-y divide-gray-700">
                     {filteredExpense.length === 0 ? (
                       <tr>
-                        <td colSpan="5" className="px-4 py-8 text-center text-gray-500">
+                        <td colSpan="5" className="px-4 py-8 text-center text-gray-400">
                           No expense records for this month.
                         </td>
                       </tr>
                     ) : (
                       filteredExpense.map((item) => (
-                        <tr key={item.id} className={`hover:bg-gray-50 ${item.isRecurring ? 'bg-blue-50' : ''}`}>
-                          <td className="px-4 py-3 text-sm text-gray-900">
-                            {item.isRecurring && <span className="text-blue-500 mr-1" title="Recurring transaction">↻</span>}
+                        <tr key={item.id} className={`hover:bg-gray-700/30 ${item.isRecurring ? 'bg-blue-900/30' : ''}`}>
+                          <td className="px-4 py-3 text-sm text-gray-100">
+                            {item.isRecurring && <span className="text-blue-400 mr-1" title="Recurring transaction">↻</span>}
                             {new Date(item.expenseDate).toLocaleDateString()}
                           </td>
                           <td className="px-4 py-3 text-sm">
-                            <span className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-medium">
+                            <span className="px-2 py-1 bg-red-900/30 text-red-400 rounded text-xs font-medium">
                               {item.category}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-600 truncate max-w-[150px]">
+                          <td className="px-4 py-3 text-sm text-gray-400 truncate max-w-[150px]">
                             {item.description || item.name}
                           </td>
-                          <td className="px-4 py-3 text-sm text-right font-semibold text-red-600">
+                          <td className="px-4 py-3 text-sm text-right font-semibold text-red-400">
                             -${item.amount.toFixed(2)}
                           </td>
                           <td className="px-4 py-3 text-center">
                             <button
                               onClick={() => handleDeleteExpense(item.id)}
-                              className="text-red-500 hover:text-red-700 text-sm font-medium"
+                              className="text-red-400 hover:text-red-400 text-sm font-medium"
                             >
                               Delete
                             </button>
@@ -737,29 +737,29 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
       {view === 'recurring' && (
         <div className="space-y-6">
           {editingRecurringId && editingRecurringForm && (
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h4 className="text-xl font-bold text-gray-800 mb-4">Edit Recurring Transaction</h4>
+            <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
+              <h4 className="text-xl font-bold text-white mb-4">Edit Recurring Transaction</h4>
               <form onSubmit={handleUpdateRecurring} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Type</label>
                     <select
                       required
                       value={editingRecurringForm.type}
                       onChange={(e) => setEditingRecurringForm({ ...editingRecurringForm, type: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-900 text-white"
                     >
                       <option value="INCOME">Income</option>
                       <option value="EXPENSE">Expense</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Frequency</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Frequency</label>
                     <select
                       required
                       value={editingRecurringForm.frequency}
                       onChange={(e) => setEditingRecurringForm({ ...editingRecurringForm, frequency: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-900 text-white"
                     >
                       <option value="MONTHLY">Monthly</option>
                       <option value="WEEKLY">Weekly</option>
@@ -769,35 +769,35 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Name</label>
                   <input
                     type="text"
                     required
                     value={editingRecurringForm.name}
                     onChange={(e) => setEditingRecurringForm({ ...editingRecurringForm, name: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-900 text-white"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Amount</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Amount</label>
                     <input
                       type="number"
                       step="0.01"
                       required
                       value={editingRecurringForm.amount}
                       onChange={(e) => setEditingRecurringForm({ ...editingRecurringForm, amount: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-900 text-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
                     <select
                       required
                       value={editingRecurringForm.category}
                       onChange={(e) => setEditingRecurringForm({ ...editingRecurringForm, category: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-900 text-white"
                     >
                       <option value="">Select category</option>
                       {(editingRecurringForm.type === 'INCOME' ? categories.income : categories.expense).map(cat => (
@@ -809,7 +809,7 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
 
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Day of Month (1-31)</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Day of Month (1-31)</label>
                     <input
                       type="number"
                       min="1"
@@ -817,37 +817,37 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
                       required
                       value={editingRecurringForm.dayOfMonth}
                       onChange={(e) => setEditingRecurringForm({ ...editingRecurringForm, dayOfMonth: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-900 text-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Start Date</label>
                     <input
                       type="date"
                       required
                       value={editingRecurringForm.startDate}
                       onChange={(e) => setEditingRecurringForm({ ...editingRecurringForm, startDate: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-900 text-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">End Date (Optional)</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">End Date (Optional)</label>
                     <input
                       type="date"
                       value={editingRecurringForm.endDate}
                       onChange={(e) => setEditingRecurringForm({ ...editingRecurringForm, endDate: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-900 text-white"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Description (Optional)</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Description (Optional)</label>
                   <textarea
                     value={editingRecurringForm.description}
                     onChange={(e) => setEditingRecurringForm({ ...editingRecurringForm, description: e.target.value })}
                     rows="2"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 bg-gray-900 text-white"
                   />
                 </div>
 
@@ -858,13 +858,13 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
                     onChange={(e) => setEditingRecurringForm({ ...editingRecurringForm, isActive: e.target.checked })}
                     className="mr-2 w-4 h-4"
                   />
-                  <label className="text-sm font-medium text-gray-700">Active</label>
+                  <label className="text-sm font-medium text-gray-300">Active</label>
                 </div>
 
                 <div className="flex gap-3 pt-4">
                   <button
                     type="submit"
-                    className="flex-1 bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
+                    className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                   >
                     Update Recurring Transaction
                   </button>
@@ -874,7 +874,7 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
                       setEditingRecurringId(null);
                       setEditingRecurringForm(null);
                     }}
-                    className="px-6 bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                    className="px-6 bg-gray-700 text-gray-300 py-3 rounded-lg font-semibold hover:bg-gray-700/30 transition-colors"
                   >
                     Cancel
                   </button>
@@ -883,14 +883,14 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
             </div>
           )}
 
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
             <div className="bg-indigo-500 text-white px-6 py-4">
               <h4 className="text-xl font-bold">Recurring Transactions</h4>
               <p className="text-sm text-indigo-100 mt-1">Manage your recurring income and expenses</p>
             </div>
 
             {recurringTransactions.length === 0 ? (
-              <div className="p-8 text-center text-gray-500">
+              <div className="p-8 text-center text-gray-400">
                 <div className="flex flex-col items-center gap-2">
                   <span className="text-4xl">🔄</span>
                   <p className="font-medium">No recurring transactions yet</p>
@@ -898,11 +898,11 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
                 </div>
               </div>
             ) : (
-              <div className="divide-y divide-gray-200">
+              <div className="divide-y divide-gray-700">
                 {recurringTransactions.map((transaction) => (
                   <div
                     key={transaction.id}
-                    className={`p-4 hover:bg-gray-50 transition-colors ${!transaction.isActive ? 'opacity-60' : ''}`}
+                    className={`p-4 hover:bg-gray-700/30 transition-colors ${!transaction.isActive ? 'opacity-60' : ''}`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -910,21 +910,21 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
                           <span
                             className={`px-3 py-1 rounded-full text-sm font-semibold ${
                               transaction.type === 'INCOME'
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-red-100 text-red-800'
+                                ? 'bg-green-900/30 text-green-400'
+                                : 'bg-red-900/30 text-red-400'
                             }`}
                           >
                             {transaction.type}
                           </span>
-                          <h5 className="font-bold text-gray-800">{transaction.name}</h5>
+                          <h5 className="font-bold text-white">{transaction.name}</h5>
                           {!transaction.isActive && (
-                            <span className="px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded">
+                            <span className="px-2 py-1 bg-gray-700 text-gray-400 text-xs rounded">
                               Inactive
                             </span>
                           )}
                         </div>
 
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-400">
                           <div>
                             <span className="font-medium">Amount:</span> ${transaction.amount.toFixed(2)}
                           </div>
@@ -940,7 +940,7 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
                         </div>
 
                         {transaction.description && (
-                          <p className="mt-2 text-sm text-gray-600 italic">{transaction.description}</p>
+                          <p className="mt-2 text-sm text-gray-400 italic">{transaction.description}</p>
                         )}
                       </div>
 
@@ -949,21 +949,21 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
                           onClick={() => handleToggleActive(transaction)}
                           className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
                             transaction.isActive
-                              ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
-                              : 'bg-green-100 text-green-700 hover:bg-green-200'
+                              ? 'bg-yellow-900/30 text-yellow-400 hover:bg-yellow-700/30'
+                              : 'bg-green-900/30 text-green-400 hover:bg-green-700'
                           }`}
                         >
                           {transaction.isActive ? 'Deactivate' : 'Activate'}
                         </button>
                         <button
                           onClick={() => handleEditRecurring(transaction)}
-                          className="px-3 py-1 bg-blue-100 text-blue-700 rounded text-sm font-medium hover:bg-blue-200 transition-colors"
+                          className="px-3 py-1 bg-blue-900/30 text-blue-400 rounded text-sm font-medium hover:bg-blue-700/30 transition-colors"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDeleteRecurring(transaction.id)}
-                          className="px-3 py-1 bg-red-100 text-red-700 rounded text-sm font-medium hover:bg-red-200 transition-colors"
+                          className="px-3 py-1 bg-red-900/30 text-red-400 rounded text-sm font-medium hover:bg-red-700/30 transition-colors"
                         >
                           Delete
                         </button>
@@ -978,22 +978,22 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
       )}
 
       {view === 'add-income' && (
-        <div className="max-w-2xl mx-auto bg-white border border-gray-200 rounded-lg p-6">
-          <h4 className="text-xl font-bold text-gray-800 mb-6">Add New Income</h4>
+        <div className="max-w-2xl mx-auto bg-gray-800 border border-gray-700 rounded-lg p-6">
+          <h4 className="text-xl font-bold text-white mb-6">Add New Income</h4>
           
-          <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="text-sm font-medium text-blue-800 mb-2">Create Custom Category</p>
+          <div className="mb-6 bg-blue-900/30 border border-blue-700 rounded-lg p-4">
+            <p className="text-sm font-medium text-blue-400 mb-2">Create Custom Category</p>
             <div className="flex gap-2">
               <input
                 type="text"
                 placeholder="Category name"
                 value={newCategory.type === 'INCOME' ? newCategory.name : ''}
                 onChange={(e) => setNewCategory({ name: e.target.value, type: 'INCOME' })}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="flex-1 px-3 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-900 text-white"
               />
               <button
                 onClick={handleAddCategory}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Add Category
               </button>
@@ -1002,24 +1002,24 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
 
           <form onSubmit={handleAddIncome} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Source</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Source</label>
               <input
                 type="text"
                 required
                 value={incomeForm.source}
                 onChange={(e) => setIncomeForm({ ...incomeForm, source: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-900 text-white"
                 placeholder="e.g., Salary, Freelance"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
               <select
                 required
                 value={incomeForm.category}
                 onChange={(e) => setIncomeForm({ ...incomeForm, category: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-900 text-white"
               >
                 <option value="">Select a category</option>
                 {categories.income.map((cat) => (
@@ -1029,43 +1029,43 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Amount</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Amount</label>
               <input
                 type="number"
                 step="0.01"
                 required
                 value={incomeForm.amount}
                 onChange={(e) => setIncomeForm({ ...incomeForm, amount: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-900 text-white"
                 placeholder="0.00"
               />
             </div>
 
             {!isRecurringIncome && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Date</label>
                 <input
                   type="date"
                   required
                   value={incomeForm.incomeDate}
                   onChange={(e) => setIncomeForm({ ...incomeForm, incomeDate: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-900 text-white"
                 />
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Description (Optional)</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Description (Optional)</label>
               <textarea
                 value={incomeForm.description}
                 onChange={(e) => setIncomeForm({ ...incomeForm, description: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-900 text-white"
                 rows="3"
                 placeholder="Additional notes..."
               />
             </div>
 
-            <div className="border-t pt-4">
+            <div className="border-t border-gray-700 pt-4">
               <div className="flex items-center mb-4">
                 <input
                   type="checkbox"
@@ -1074,22 +1074,22 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
                   onChange={(e) => setIsRecurringIncome(e.target.checked)}
                   className="mr-2 w-4 h-4"
                 />
-                <label htmlFor="isRecurringIncome" className="text-sm font-medium text-gray-700">
+                <label htmlFor="isRecurringIncome" className="text-sm font-medium text-gray-300">
                   Make this recurring
                 </label>
               </div>
 
               {isRecurringIncome && (
-                <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 space-y-4">
-                  <h5 className="font-semibold text-indigo-800">Recurring Settings</h5>
+                <div className="bg-indigo-900/30 border border-indigo-700 rounded-lg p-4 space-y-4">
+                  <h5 className="font-semibold text-indigo-400">Recurring Settings</h5>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Frequency</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Frequency</label>
                     <select
                       required
                       value={recurringFormIncome.frequency}
                       onChange={(e) => setRecurringFormIncome({ ...recurringFormIncome, frequency: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-900 text-white"
                     >
                       <option value="MONTHLY">Monthly</option>
                       <option value="WEEKLY">Weekly</option>
@@ -1098,7 +1098,7 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Day of Month (1-31)</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Day of Month (1-31)</label>
                     <input
                       type="number"
                       min="1"
@@ -1106,28 +1106,28 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
                       required
                       value={recurringFormIncome.dayOfMonth}
                       onChange={(e) => setRecurringFormIncome({ ...recurringFormIncome, dayOfMonth: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-900 text-white"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Start Date</label>
                     <input
                       type="date"
                       required
                       value={recurringFormIncome.startDate}
                       onChange={(e) => setRecurringFormIncome({ ...recurringFormIncome, startDate: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-900 text-white"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">End Date (Optional)</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">End Date (Optional)</label>
                     <input
                       type="date"
                       value={recurringFormIncome.endDate}
                       onChange={(e) => setRecurringFormIncome({ ...recurringFormIncome, endDate: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-900 text-white"
                     />
                   </div>
                 </div>
@@ -1137,14 +1137,14 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
             <div className="flex gap-3 pt-4">
               <button
                 type="submit"
-                className="flex-1 bg-green-500 text-white py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors"
+                className="flex-1 bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
               >
                 {isRecurringIncome ? 'Add Recurring Income' : 'Add Income'}
               </button>
               <button
                 type="button"
                 onClick={() => handleViewChange('ledger-overview')}
-                className="px-6 bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                className="px-6 bg-gray-700 text-gray-300 py-3 rounded-lg font-semibold hover:bg-gray-700/30 transition-colors"
               >
                 Cancel
               </button>
@@ -1154,22 +1154,22 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
       )}
 
       {view === 'add-expense' && (
-        <div className="max-w-2xl mx-auto bg-white border border-gray-200 rounded-lg p-6">
-          <h4 className="text-xl font-bold text-gray-800 mb-6">Add New Expense</h4>
+        <div className="max-w-2xl mx-auto bg-gray-800 border border-gray-700 rounded-lg p-6">
+          <h4 className="text-xl font-bold text-white mb-6">Add New Expense</h4>
           
-          <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="text-sm font-medium text-blue-800 mb-2">Create Custom Category</p>
+          <div className="mb-6 bg-blue-900/30 border border-blue-700 rounded-lg p-4">
+            <p className="text-sm font-medium text-blue-400 mb-2">Create Custom Category</p>
             <div className="flex gap-2">
               <input
                 type="text"
                 placeholder="Category name"
                 value={newCategory.type === 'EXPENSE' ? newCategory.name : ''}
                 onChange={(e) => setNewCategory({ name: e.target.value, type: 'EXPENSE' })}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="flex-1 px-3 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-900 text-white"
               />
               <button
                 onClick={handleAddCategory}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Add Category
               </button>
@@ -1178,24 +1178,24 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
 
           <form onSubmit={handleAddExpense} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Name</label>
               <input
                 type="text"
                 required
                 value={expenseForm.name}
                 onChange={(e) => setExpenseForm({ ...expenseForm, name: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-gray-900 text-white"
                 placeholder="e.g., Groceries, Rent"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
               <select
                 required
                 value={expenseForm.category}
                 onChange={(e) => setExpenseForm({ ...expenseForm, category: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-gray-900 text-white"
               >
                 <option value="">Select a category</option>
                 {categories.expense.map((cat) => (
@@ -1205,43 +1205,43 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Amount</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Amount</label>
               <input
                 type="number"
                 step="0.01"
                 required
                 value={expenseForm.amount}
                 onChange={(e) => setExpenseForm({ ...expenseForm, amount: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-gray-900 text-white"
                 placeholder="0.00"
               />
             </div>
 
             {!isRecurringExpense && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Date</label>
                 <input
                   type="date"
                   required
                   value={expenseForm.expenseDate}
                   onChange={(e) => setExpenseForm({ ...expenseForm, expenseDate: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-gray-900 text-white"
                 />
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Description (Optional)</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Description (Optional)</label>
               <textarea
                 value={expenseForm.description}
                 onChange={(e) => setExpenseForm({ ...expenseForm, description: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-gray-900 text-white"
                 rows="3"
                 placeholder="Additional notes..."
               />
             </div>
 
-            <div className="border-t pt-4">
+            <div className="border-t border-gray-700 pt-4">
               <div className="flex items-center mb-4">
                 <input
                   type="checkbox"
@@ -1250,22 +1250,22 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
                   onChange={(e) => setIsRecurringExpense(e.target.checked)}
                   className="mr-2 w-4 h-4"
                 />
-                <label htmlFor="isRecurringExpense" className="text-sm font-medium text-gray-700">
+                <label htmlFor="isRecurringExpense" className="text-sm font-medium text-gray-300">
                   Make this recurring
                 </label>
               </div>
 
               {isRecurringExpense && (
-                <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 space-y-4">
-                  <h5 className="font-semibold text-indigo-800">Recurring Settings</h5>
+                <div className="bg-indigo-900/30 border border-indigo-700 rounded-lg p-4 space-y-4">
+                  <h5 className="font-semibold text-indigo-400">Recurring Settings</h5>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Frequency</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Frequency</label>
                     <select
                       required
                       value={recurringFormExpense.frequency}
                       onChange={(e) => setRecurringFormExpense({ ...recurringFormExpense, frequency: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-900 text-white"
                     >
                       <option value="MONTHLY">Monthly</option>
                       <option value="WEEKLY">Weekly</option>
@@ -1274,7 +1274,7 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Day of Month (1-31)</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Day of Month (1-31)</label>
                     <input
                       type="number"
                       min="1"
@@ -1282,28 +1282,28 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
                       required
                       value={recurringFormExpense.dayOfMonth}
                       onChange={(e) => setRecurringFormExpense({ ...recurringFormExpense, dayOfMonth: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-900 text-white"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Start Date</label>
                     <input
                       type="date"
                       required
                       value={recurringFormExpense.startDate}
                       onChange={(e) => setRecurringFormExpense({ ...recurringFormExpense, startDate: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-900 text-white"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">End Date (Optional)</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">End Date (Optional)</label>
                     <input
                       type="date"
                       value={recurringFormExpense.endDate}
                       onChange={(e) => setRecurringFormExpense({ ...recurringFormExpense, endDate: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-4 py-2 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-900 text-white"
                     />
                   </div>
                 </div>
@@ -1313,14 +1313,14 @@ const IncomeExpenseTracker = ({ userId = 1, initialView = 'ledger-overview', onV
             <div className="flex gap-3 pt-4">
               <button
                 type="submit"
-                className="flex-1 bg-red-500 text-white py-3 rounded-lg font-semibold hover:bg-red-600 transition-colors"
+                className="flex-1 bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors"
               >
                 {isRecurringExpense ? 'Add Recurring Expense' : 'Add Expense'}
               </button>
               <button
                 type="button"
                 onClick={() => handleViewChange('ledger-overview')}
-                className="px-6 bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                className="px-6 bg-gray-700 text-gray-300 py-3 rounded-lg font-semibold hover:bg-gray-700/30 transition-colors"
               >
                 Cancel
               </button>
