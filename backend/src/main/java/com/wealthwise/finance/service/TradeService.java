@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +21,20 @@ public class TradeService {
     
     @Autowired
     private TradeRepository tradeRepository;
+    
+    private String detectSession(LocalDateTime openTime) {
+        int hour = openTime.atZone(ZoneOffset.UTC).getHour();
+        
+        if (hour >= 12 && hour < 21) {
+            return "New York";
+        } else if (hour >= 7 && hour < 16) {
+            return "London";
+        } else if (hour >= 0 && hour < 9) {
+            return "Asia";
+        } else {
+            return "After Hours";
+        }
+    }
     
     @Transactional
     public TradeDTO createTrade(TradeDTO tradeDTO, Long userId) {
@@ -31,9 +47,9 @@ public class TradeService {
         trade.setProfitLoss(tradeDTO.getProfitLoss());
         trade.setOpenTime(tradeDTO.getOpenTime());
         trade.setCloseTime(tradeDTO.getCloseTime());
-        trade.setTradeDate(tradeDTO.getTradeDate());
+        trade.setTradeDate(tradeDTO.getCloseTime().toLocalDate());
         trade.setDurationMinutes(tradeDTO.getDurationMinutes());
-        trade.setSession(tradeDTO.getSession());
+        trade.setSession(detectSession(tradeDTO.getOpenTime()));
         trade.setStrategyTag(tradeDTO.getStrategyTag());
         
         Trade savedTrade = tradeRepository.save(trade);
@@ -74,9 +90,9 @@ public class TradeService {
         trade.setProfitLoss(tradeDTO.getProfitLoss());
         trade.setOpenTime(tradeDTO.getOpenTime());
         trade.setCloseTime(tradeDTO.getCloseTime());
-        trade.setTradeDate(tradeDTO.getTradeDate());
+        trade.setTradeDate(tradeDTO.getCloseTime().toLocalDate());
         trade.setDurationMinutes(tradeDTO.getDurationMinutes());
-        trade.setSession(tradeDTO.getSession());
+        trade.setSession(detectSession(tradeDTO.getOpenTime()));
         trade.setStrategyTag(tradeDTO.getStrategyTag());
         
         Trade updatedTrade = tradeRepository.save(trade);

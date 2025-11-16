@@ -31,7 +31,6 @@ public class TradeDTO {
     @NotNull(message = "Close time is required")
     private LocalDateTime closeTime;
     
-    @NotNull(message = "Trade date is required")
     private LocalDate tradeDate;
     
     @NotNull(message = "Duration is required")
