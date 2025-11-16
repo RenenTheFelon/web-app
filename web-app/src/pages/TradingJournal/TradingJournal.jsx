@@ -3,6 +3,8 @@ import BehavioralBiasPanel from './components/BehavioralBiasPanel';
 import TradingDayPerformancePanel from './components/TradingDayPerformancePanel';
 import ProfitabilityPanel from './components/ProfitabilityPanel';
 import MostTradedInstrumentsPanel from './components/MostTradedInstrumentsPanel';
+import TradeLogsPanel from './components/TradeLogsPanel';
+import RecentTradesPanel from './components/RecentTradesPanel';
 import TradeEntryForm from './components/TradeEntryForm';
 
 export default function TradingJournal() {
@@ -29,6 +31,8 @@ export default function TradingJournal() {
           <TradingDayPerformancePanel key={`performance-${refreshKey}`} />
           <ProfitabilityPanel key={`profitability-${refreshKey}`} />
           <MostTradedInstrumentsPanel key={`instruments-${refreshKey}`} />
+          <TradeLogsPanel key={`logs-${refreshKey}`} />
+          <RecentTradesPanel key={`recent-${refreshKey}`} />
         </div>
       </div>
     </div>
