@@ -97,4 +97,16 @@ export const monthlyBalanceAPI = {
   recalculate: (year, month) => api.post(`/monthly-balances/recalculate/${year}/${month}`),
 };
 
+export const tradeAPI = {
+  getAll: () => api.get('/trades'),
+  getById: (id) => api.get(`/trades/${id}`),
+  create: (trade) => api.post('/trades', trade),
+  update: (id, trade) => api.put(`/trades/${id}`, trade),
+  delete: (id) => api.delete(`/trades/${id}`),
+  getBehavioralBias: () => api.get('/trades/analytics/behavioral-bias'),
+  getTradingDayPerformance: (startDate, endDate) => api.get('/trades/analytics/trading-day-performance', { params: { startDate, endDate } }),
+  getProfitability: () => api.get('/trades/analytics/profitability'),
+  getMostTraded: (limit) => api.get('/trades/analytics/most-traded', { params: { limit } }),
+};
+
 export default api;

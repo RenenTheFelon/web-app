@@ -1,8 +1,11 @@
 com/wealthwise/finance/entity/RecurringTransaction.class
+com/wealthwise/finance/controller/TradeController.class
 com/wealthwise/finance/service/AssetService.class
 com/wealthwise/finance/service/UserService.class
+com/wealthwise/finance/service/TradeService.class
 com/wealthwise/finance/controller/ExpenseController.class
 com/wealthwise/finance/entity/RecurringTransaction$Frequency.class
+com/wealthwise/finance/dto/TradeDTO.class
 com/wealthwise/finance/controller/NetWorthController.class
 com/wealthwise/finance/service/MonthlyBalanceService.class
 com/wealthwise/finance/controller/BudgetController.class
@@ -18,6 +21,7 @@ com/wealthwise/finance/controller/IncomeController.class
 com/wealthwise/finance/repository/ExpenseRepository.class
 com/wealthwise/finance/entity/Goal.class
 com/wealthwise/finance/dto/RecurringTransactionDto.class
+com/wealthwise/finance/model/Trade.class
 com/wealthwise/finance/dto/ExpenseDto.class
 com/wealthwise/finance/exception/ResourceNotFoundException.class
 com/wealthwise/finance/entity/Income.class
@@ -36,6 +40,7 @@ com/wealthwise/finance/controller/GoalController.class
 com/wealthwise/finance/exception/GlobalExceptionHandler.class
 com/wealthwise/finance/service/IncomeService.class
 com/wealthwise/finance/repository/CategoryRepository.class
+com/wealthwise/finance/repository/TradeRepository.class
 com/wealthwise/finance/service/ExpenseService.class
 com/wealthwise/finance/repository/IncomeRepository.class
 com/wealthwise/finance/dto/CategoryDto.class

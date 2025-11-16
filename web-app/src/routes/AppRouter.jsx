@@ -5,6 +5,7 @@ import Products from '../pages/Products/Products.jsx'
 import Watchlist from '../pages/Products/Watchlist.jsx'
 import Charts from '../pages/Products/Charts.jsx'
 import PersonalFinance from '../pages/PersonalFinance/PersonalFinance.jsx'
+import TradingJournal from '../pages/TradingJournal/TradingJournal.jsx'
 
 
 const AppRouter = () => {
@@ -21,6 +22,7 @@ const AppRouter = () => {
       </Route>
 
       <Route path="/personal-finance" element={<PersonalFinance />} />
+      <Route path="/trading-journal" element={<TradingJournal />} />
     </Routes>
   )
 }

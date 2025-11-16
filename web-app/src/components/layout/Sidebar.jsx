@@ -77,6 +77,11 @@ const Sidebar = () => {
             </div>
           )}
         </div>
+
+        {/* Trading Journal */}
+        <NavLink to="/trading-journal" className={linkClass}>
+          Trading Journal
+        </NavLink>
       </nav>
     </aside>
   )
