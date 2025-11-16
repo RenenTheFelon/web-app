@@ -1,0 +1,115 @@
+I want to create a Trading Journal dashboard similar in layout and design to the image I’ve provided.
+My version will not use automatically recorded trades from a broker terminal — instead, it will use manual trade entries that users input themselves.
+
+The goal is for the app to analyze the user’s manually entered trades and display visually rich insight panels (similar to the “cards” in the image) that summarize their performance and behavior.
+
+1️⃣ Data Inputs (from each trade)
+Each manually entered trade should include:
+
+Asset name or pair (e.g. XAUUSD, BTCUSD)
+
+Order type (Buy or Sell)
+
+Entry price and exit price
+
+Order open time and close time (to calculate holding period)
+
+Profit or loss amount
+
+Date executed
+
+Trade duration (calculated)
+
+Optional: session/timezone (e.g. New York, London, Asia)
+
+Optional: category or strategy tag
+
+This information will feed into all the insight panels below.
+
+2️⃣ Behavioral Bias Panel
+
+This panel should visually represent the trader’s overall bias — for example, showing if they are more frequently Bullish (Buy) or Bearish (Sell).
+
+The app should calculate the ratio of total Buy vs. Sell orders and display it as a horizontal bar with percentages.
+
+Use icons (bull/bear) and color-coded styling (blue for bull, gray for bear).
+
+The text label should read:
+
+“Rather Bull” if buy trades exceed 50%
+
+“Rather Bear” if sell trades exceed 50%
+
+“Neutral” if roughly balanced
+
+3️⃣ Trading Day Performance Panel
+
+This panel shows the user’s profit or loss distribution across the current week.
+
+Use the data from the latest 7 days (Sunday → Saturday).
+
+For now, it should display the current week only; later, we’ll add functionality to scroll through past weeks and months.
+
+Each bar represents one day’s cumulative P/L (profits in green, losses in red).
+
+Include a small header or label that shows “Best Day: [Day Name]” based on the highest profit.
+
+4️⃣ Profitability Panel
+
+Display overall win rate and loss rate based on all trades entered.
+
+Show:
+
+Total trades taken
+
+Win percentage
+
+Loss percentage
+
+Total profit vs. total loss
+
+Include a circular progress chart (like the reference image) showing the ratio of wins to losses.
+
+Keep the same modern, minimal design — strong use of white space, clean font, and green/red contrast.
+
+5️⃣ Most Traded Instruments Panel
+
+Display the top 3 most traded assets or instruments.
+
+Each should have a bar showing the number of wins and losses (color-coded).
+
+Show data in format: [Instrument Name] — X Wins / Y Losses.
+
+Order the list from most-traded to least-traded (top 3 only).
+
+6️⃣ General Design & Layout
+
+Use a card-based layout (like the sample image). Each insight panel should be a self-contained, responsive component with rounded corners, light shadows, and clear data labels.
+
+Keep a consistent color scheme:
+
+Green for profits, red for losses, blue/gray for neutral or background tones.
+
+Use smooth transitions when switching between tabs or loading data (minimize visible lag).
+
+Include a small loading state (e.g., “Fetching trades...”) before data is rendered.
+
+7️⃣ Data Management
+
+Store all manually entered trades in a persistent database (PostgreSQL).
+
+The data should automatically update the dashboard whenever a new trade is added or deleted.
+
+Include backend logic to recalculate all analytics in real-time.
+
+8️⃣ Future Extensions (for context)
+
+In future updates, we’ll include:
+
+Time filters (view by week, month, quarter).
+
+Strategy performance tracking.
+
+Emotional tag analysis (“Confidence,” “Hesitation,” etc.)
+
+Export and analytics report generation.
