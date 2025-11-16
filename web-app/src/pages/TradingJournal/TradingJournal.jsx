@@ -29,7 +29,7 @@ export default function TradingJournal() {
           <BehavioralBiasPanel key={`bias-${refreshKey}`} />
           <TradingDayPerformancePanel key={`performance-${refreshKey}`} />
           <ProfitabilityPanel key={`profitability-${refreshKey}`} />
-          <MostTradedInstrumentsPanel key={`instruments-${refreshKey}`} />
+          <MostTradedInstrumentsPanel key={`instruments-${refreshKey}`} refreshKey={refreshKey} />
           <TradeLogsPanel key={`logs-${refreshKey}`} refreshKey={refreshKey} />
         </div>
       </div>
