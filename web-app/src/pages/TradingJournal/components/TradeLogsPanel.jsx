@@ -25,7 +25,7 @@ export default function TradeLogsPanel({ refreshKey }) {
   };
 
   const formatPrice = (price) => {
-    return parseFloat(price).toFixed(8);
+    return parseFloat(price).toFixed(2);
   };
 
   const formatPL = (pl) => {

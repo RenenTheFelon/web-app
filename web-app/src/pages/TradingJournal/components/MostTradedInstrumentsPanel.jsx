@@ -52,33 +52,36 @@ export default function MostTradedInstrumentsPanel() {
           <p className="text-gray-400">No trades recorded yet</p>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-4">
           {data.map((instrument, index) => {
             const totalTrades = instrument.wins + instrument.losses;
             const winPercentage = (instrument.wins / totalTrades) * 100;
             const lossPercentage = (instrument.losses / totalTrades) * 100;
 
             return (
-              <div key={index} className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-white font-bold text-lg">{instrument.asset}</span>
-                  <span className="text-gray-300 text-sm">
-                    {instrument.wins}W / {instrument.losses}L
+              <div key={index}>
+                <div className="flex justify-end mb-1">
+                  <span className="text-gray-400 text-xs">
+                    W / L
                   </span>
                 </div>
                 
-                <div className="w-full h-8 bg-gray-900 rounded-lg overflow-hidden flex">
+                <div className="w-full h-10 bg-gray-900 rounded-lg overflow-hidden flex relative">
+                  <div className="absolute left-3 top-0 h-full flex items-center z-10">
+                    <span className="text-white font-bold text-sm">{instrument.asset}</span>
+                  </div>
+                  
                   <div 
-                    className="bg-green-600 flex items-center justify-center text-white text-xs font-semibold transition-all duration-300"
+                    className="bg-green-600 flex items-center justify-end pr-2 transition-all duration-300"
                     style={{ width: `${winPercentage}%` }}
                   >
-                    {winPercentage > 15 && instrument.wins}
+                    <span className="text-white text-xs font-semibold">{instrument.wins}</span>
                   </div>
                   <div 
-                    className="bg-red-600 flex items-center justify-center text-white text-xs font-semibold transition-all duration-300"
+                    className="bg-red-600 flex items-center justify-start pl-2 transition-all duration-300"
                     style={{ width: `${lossPercentage}%` }}
                   >
-                    {lossPercentage > 15 && instrument.losses}
+                    <span className="text-white text-xs font-semibold">{instrument.losses}</span>
                   </div>
                 </div>
               </div>

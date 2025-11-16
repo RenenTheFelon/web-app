@@ -77,18 +77,29 @@ export default function BehavioralBiasPanel() {
           <span className="text-2xl">🐻</span>
         </div>
 
-        <div className="w-full h-10 bg-gray-900 rounded-lg overflow-hidden flex">
-          <div 
-            className="bg-blue-600 flex items-center justify-center text-white text-sm font-semibold transition-all duration-300"
-            style={{ width: `${bullPercentage}%` }}
-          >
-            {bullPercentage > 10 && `${bullPercentage.toFixed(1)}%`}
+        <div className="relative">
+          <div className="w-full h-10 bg-gray-900 rounded-lg overflow-hidden flex">
+            <div 
+              className="bg-green-600 flex items-center justify-center text-white text-sm font-semibold transition-all duration-300"
+              style={{ width: `${bullPercentage}%` }}
+            >
+              {bullPercentage > 10 && `${bullPercentage.toFixed(1)}%`}
+            </div>
+            <div 
+              className="bg-red-600 flex items-center justify-center text-white text-sm font-semibold transition-all duration-300"
+              style={{ width: `${bearPercentage}%` }}
+            >
+              {bearPercentage > 10 && `${bearPercentage.toFixed(1)}%`}
+            </div>
           </div>
+          
           <div 
-            className="bg-gray-600 flex items-center justify-center text-white text-sm font-semibold transition-all duration-300"
-            style={{ width: `${bearPercentage}%` }}
+            className="absolute top-0 h-10 w-1 bg-yellow-400 transition-all duration-300 shadow-lg shadow-yellow-400/50 -translate-x-1/2"
+            style={{ left: `${bullPercentage}%` }}
           >
-            {bearPercentage > 10 && `${bearPercentage.toFixed(1)}%`}
+            <div className="absolute -top-8 left-0 text-yellow-400 text-2xl">
+              ▼
+            </div>
           </div>
         </div>
 
