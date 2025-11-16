@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { tradeAPI } from '../../../services/api';
 
-export default function BehavioralBiasPanel() {
+export default function BehavioralBiasPanel({ refreshKey }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchBehavioralBias();
-  }, []);
+  }, [refreshKey]);
 
   const fetchBehavioralBias = async () => {
     try {
@@ -47,19 +47,19 @@ export default function BehavioralBiasPanel() {
     return null;
   }
 
-  const sellPercentage = isNaN(data.bearPercentage) ? 0 : (data.bearPercentage || 0);
-  const buyPercentage = isNaN(data.bullPercentage) ? 0 : (data.bullPercentage || 0);
+  const sellPercentage = data.sellPercentage || 0;
+  const buyPercentage = data.buyPercentage || 0;
+  const sellCount = data.sellCount || 0;
+  const buyCount = data.buyCount || 0;
   const totalTrades = data.totalTrades || 0;
-  const sellCount = isNaN(sellPercentage) ? 0 : Math.round((sellPercentage * totalTrades) / 100);
-  const buyCount = isNaN(buyPercentage) ? 0 : Math.round((buyPercentage * totalTrades) / 100);
 
   const getBiasLabel = () => {
-    if (buyPercentage > sellPercentage + 10) {
-      return { text: 'Rather Bull', className: 'text-green-400' };
-    } else if (sellPercentage > buyPercentage + 10) {
+    if (data.bias === 'RATHER_BULL') {
+      return { text: 'Rather Bull', className: 'text-blue-400' };
+    } else if (data.bias === 'RATHER_BEAR') {
       return { text: 'Rather Bear', className: 'text-red-400' };
     } else {
-      return { text: 'Neutral', className: 'text-yellow-400' };
+      return { text: 'Neutral', className: 'text-gray-300' };
     }
   };
 
@@ -69,61 +69,56 @@ export default function BehavioralBiasPanel() {
     <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-semibold text-white">Behavioral Bias</h3>
-        <span className="text-gray-300 text-sm">Total Trades: {data.totalTrades}</span>
+        <span className="text-gray-300 text-sm">Total Trades: {totalTrades}</span>
       </div>
 
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        {/* Icons and counts */}
+        <div className="flex items-start justify-between px-4">
           <div className="flex flex-col items-center">
-            <span className="text-4xl mb-2">🐻</span>
-            <div className="text-center">
-              <div className="text-red-400 font-bold text-lg">{sellCount}</div>
-              <div className="text-gray-400 text-xs">{sellPercentage.toFixed(1)}%</div>
-            </div>
+            <span className="text-5xl mb-2">🐻</span>
           </div>
           
           <div className="flex flex-col items-center">
-            <span className="text-4xl mb-2">🐂</span>
-            <div className="text-center">
-              <div className="text-green-400 font-bold text-lg">{buyCount}</div>
-              <div className="text-gray-400 text-xs">{buyPercentage.toFixed(1)}%</div>
-            </div>
+            <span className={`text-2xl font-bold ${biasLabel.className}`}>
+              {biasLabel.text}
+            </span>
+          </div>
+          
+          <div className="flex flex-col items-center">
+            <span className="text-5xl mb-2">🐂</span>
           </div>
         </div>
 
-        <div className="relative">
-          <div className="w-full h-12 bg-gray-900 rounded-full overflow-hidden flex shadow-lg">
+        {/* Progress bar with knob */}
+        <div className="relative px-4">
+          <div className="w-full h-3 bg-gray-400 rounded-full overflow-hidden flex">
             <div 
-              className="bg-gradient-to-r from-red-600 to-red-500 flex items-center justify-center text-white text-sm font-semibold transition-all duration-500 ease-in-out"
-              style={{ width: `${sellPercentage}%` }}
-            >
-              {sellPercentage > 15 && `SELL`}
-            </div>
-            <div 
-              className="bg-gradient-to-r from-green-500 to-green-600 flex items-center justify-center text-white text-sm font-semibold transition-all duration-500 ease-in-out"
+              className="bg-blue-500 transition-all duration-500"
               style={{ width: `${buyPercentage}%` }}
-            >
-              {buyPercentage > 15 && `BUY`}
-            </div>
+            />
           </div>
           
+          {/* Knob indicator */}
           <div 
-            className="absolute top-1/2 -translate-y-1/2 transition-all duration-500 ease-in-out"
+            className="absolute top-1/2 transition-all duration-500"
             style={{ left: `${buyPercentage}%`, transform: 'translate(-50%, -50%)' }}
           >
-            <div className="relative">
-              <div className="w-6 h-6 bg-yellow-400 rounded-full border-4 border-gray-900 shadow-xl shadow-yellow-400/50 animate-pulse"></div>
-              <div className="absolute -top-10 left-1/2 -translate-x-1/2 text-yellow-400 text-3xl drop-shadow-lg">
-                ▼
-              </div>
+            <div className="w-5 h-5 bg-blue-600 rounded-full border-2 border-white shadow-lg"></div>
+            <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-white text-xs">
+              ▲
             </div>
           </div>
         </div>
 
-        <div className="text-center pt-2">
-          <span className={`text-2xl font-bold ${biasLabel.className} drop-shadow-lg`}>
-            {biasLabel.text}
-          </span>
+        {/* Counts below */}
+        <div className="flex items-center justify-between px-4 text-sm">
+          <div className="text-gray-300">
+            {sellCount} ({sellPercentage.toFixed(1)}%)
+          </div>
+          <div className="text-gray-300">
+            {buyCount} ({buyPercentage.toFixed(1)}%)
+          </div>
         </div>
       </div>
     </div>

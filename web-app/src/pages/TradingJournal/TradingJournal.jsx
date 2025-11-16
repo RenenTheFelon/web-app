@@ -26,7 +26,7 @@ export default function TradingJournal() {
         <TradeEntryForm onTradeAdded={handleTradeAdded} />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-          <BehavioralBiasPanel key={`bias-${refreshKey}`} />
+          <BehavioralBiasPanel key={`bias-${refreshKey}`} refreshKey={refreshKey} />
           <TradingDayPerformancePanel key={`performance-${refreshKey}`} />
           <ProfitabilityPanel key={`profitability-${refreshKey}`} />
           <MostTradedInstrumentsPanel key={`instruments-${refreshKey}`} refreshKey={refreshKey} />
