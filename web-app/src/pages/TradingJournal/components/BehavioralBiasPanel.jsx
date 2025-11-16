@@ -47,10 +47,11 @@ export default function BehavioralBiasPanel() {
     return null;
   }
 
-  const sellCount = data.totalTrades - (data.bullPercentage * data.totalTrades / 100);
-  const buyCount = data.bullPercentage * data.totalTrades / 100;
-  const sellPercentage = data.bearPercentage || 0;
-  const buyPercentage = data.bullPercentage || 0;
+  const sellPercentage = isNaN(data.bearPercentage) ? 0 : (data.bearPercentage || 0);
+  const buyPercentage = isNaN(data.bullPercentage) ? 0 : (data.bullPercentage || 0);
+  const totalTrades = data.totalTrades || 0;
+  const sellCount = isNaN(sellPercentage) ? 0 : Math.round((sellPercentage * totalTrades) / 100);
+  const buyCount = isNaN(buyPercentage) ? 0 : Math.round((buyPercentage * totalTrades) / 100);
 
   const getBiasLabel = () => {
     if (buyPercentage > sellPercentage + 10) {
@@ -76,7 +77,7 @@ export default function BehavioralBiasPanel() {
           <div className="flex flex-col items-center">
             <span className="text-4xl mb-2">🐻</span>
             <div className="text-center">
-              <div className="text-red-400 font-bold text-lg">{Math.round(sellCount)}</div>
+              <div className="text-red-400 font-bold text-lg">{sellCount}</div>
               <div className="text-gray-400 text-xs">{sellPercentage.toFixed(1)}%</div>
             </div>
           </div>
@@ -84,7 +85,7 @@ export default function BehavioralBiasPanel() {
           <div className="flex flex-col items-center">
             <span className="text-4xl mb-2">🐂</span>
             <div className="text-center">
-              <div className="text-green-400 font-bold text-lg">{Math.round(buyCount)}</div>
+              <div className="text-green-400 font-bold text-lg">{buyCount}</div>
               <div className="text-gray-400 text-xs">{buyPercentage.toFixed(1)}%</div>
             </div>
           </div>

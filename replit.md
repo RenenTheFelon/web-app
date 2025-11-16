@@ -39,11 +39,22 @@ WealthWise is a full-stack application utilizing a React frontend and a Spring B
     4.  **Goal Planner**: Tracks financial goals with progress bars and status management.
     5.  **Net Worth Tracker**: Manages assets/liabilities and calculates historical net worth. Features 12-month projection visualization using monthly balance carryover data - accurately accumulates monthly deltas (closing - opening) to project future net worth based on recurring income/expenses.
 - **Trading Journal**: Comprehensive trading performance analysis dashboard for manual trade tracking:
-    - **Manual Trade Entry**: Collapsible form for recording trades with all essential fields (asset, order type, entry/exit prices, P/L, timestamps, duration, session, strategy tags). Auto-calculates trade duration from open/close times.
-    - **Behavioral Bias Panel**: Visual representation of trading bias (bull vs. bear) with horizontal progress bar showing BUY vs. SELL order distribution. Displays "Rather Bull", "Rather Bear", or "Neutral" based on trade ratios.
-    - **Trading Day Performance Panel**: 7-day bar chart showing daily profit/loss for the current week (Sunday-Saturday). Green bars for profits, red for losses, with "Best Day" indicator showing highest profit day.
+    - **Manual Trade Entry**: Collapsible form for recording trades with essential fields (asset, order type, entry/exit prices, P/L, open/close times, strategy tags). Session and trade date auto-calculated from timestamps. Session detection based on UTC time: Asia (00:00-09:00), London (07:00-16:00), New York (12:00-21:00), After Hours (21:00-00:00) with overlap resolution.
+    - **Behavioral Bias Panel**: Fully dynamic visual representation showing BUY vs. SELL trade distribution:
+        - Bear icon (🐻) on left, Bull icon (🐂) on right with counts and percentages below each
+        - Proportional fill bar: red gradient (SELL) fills from left, green gradient (BUY) fills from right
+        - Yellow pulsing knob indicator moves along bar based on ratio (left for SELL-heavy, right for BUY-heavy, center when balanced)
+        - Auto-updating label: "Rather Bear" (red), "Neutral" (yellow), or "Rather Bull" (green) with 10% threshold
+        - Smooth 500ms animations with gradients, shadows, and rounded edges
+    - **Trading Day Performance Panel**: 7-day bar chart showing daily profit/loss for current week (Sunday-Saturday). Green bars for profits, red for losses, with "Best Day" indicator showing highest profit day.
     - **Profitability Panel**: Circular donut chart displaying win rate percentage with detailed statistics (total trades, winning/losing trades, total profit/loss, net P/L). Color-coded green for profits, red for losses.
-    - **Most Traded Instruments Panel**: Top 3 most-traded assets with horizontal bars showing win/loss breakdown for each instrument.
+    - **Most Traded 3 Instruments Panel**: Top 3 most-traded assets with proportional win/loss visualization:
+        - Asset name displayed on left, W/L count on right (e.g., "560W / 746L")
+        - Single bar per asset with green gradient (wins) and red gradient (losses) filling proportionally
+        - Percentage display inside bar segments when space allows (>20%)
+        - Smooth 500ms transitions with hover effects, gradients, and rounded edges
+        - Auto-updates when new trades added via refreshKey mechanism
+    - **Trade Logs Panel**: Scrollable list showing all trades with asset name, order type badge, open/close prices (2 decimal points), and color-coded P/L. Auto-refreshes on new trade entry.
 
 **System Design Choices:**
 - **Database Schema**: PostgreSQL database with tables for users, categories, income, expenses, recurring transactions, budgets, goals, net worth, monthly_balances, and trades. All tables are linked to the `users` table via foreign keys for data isolation.
