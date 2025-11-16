@@ -14,9 +14,7 @@ export default function TradeEntryForm({ onTradeAdded }) {
     profitLoss: '',
     openTime: '',
     closeTime: '',
-    tradeDate: new Date().toISOString().split('T')[0],
     durationMinutes: '',
-    session: '',
     strategyTag: ''
   });
 
@@ -62,9 +60,7 @@ export default function TradeEntryForm({ onTradeAdded }) {
         profitLoss: parseFloat(formData.profitLoss),
         openTime: formData.openTime,
         closeTime: formData.closeTime,
-        tradeDate: formData.tradeDate,
         durationMinutes: parseInt(formData.durationMinutes),
-        session: formData.session || null,
         strategyTag: formData.strategyTag || null
       };
 
@@ -78,9 +74,7 @@ export default function TradeEntryForm({ onTradeAdded }) {
         profitLoss: '',
         openTime: '',
         closeTime: '',
-        tradeDate: new Date().toISOString().split('T')[0],
         durationMinutes: '',
-        session: '',
         strategyTag: ''
       });
       
@@ -217,21 +211,6 @@ export default function TradeEntryForm({ onTradeAdded }) {
               </div>
 
               <div>
-                <label htmlFor="tradeDate" className="block text-sm font-medium text-gray-300 mb-2">
-                  Trade Date <span className="text-red-400">*</span>
-                </label>
-                <input
-                  type="date"
-                  id="tradeDate"
-                  name="tradeDate"
-                  value={formData.tradeDate}
-                  onChange={handleChange}
-                  required
-                  className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                />
-              </div>
-
-              <div>
                 <label htmlFor="openTime" className="block text-sm font-medium text-gray-300 mb-2">
                   Open Time <span className="text-red-400">*</span>
                 </label>
@@ -244,6 +223,7 @@ export default function TradeEntryForm({ onTradeAdded }) {
                   required
                   className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
+                <p className="text-xs text-gray-500 mt-1">Session auto-detected from UTC time</p>
               </div>
 
               <div>
@@ -276,28 +256,10 @@ export default function TradeEntryForm({ onTradeAdded }) {
                   placeholder="Auto-calculated"
                   readOnly
                 />
-                <p className="text-xs text-gray-500 mt-1">Automatically calculated from open/close times</p>
+                <p className="text-xs text-gray-500 mt-1">Auto-calculated from open/close times</p>
               </div>
 
               <div>
-                <label htmlFor="session" className="block text-sm font-medium text-gray-300 mb-2">
-                  Session
-                </label>
-                <select
-                  id="session"
-                  name="session"
-                  value={formData.session}
-                  onChange={handleChange}
-                  className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                >
-                  <option value="">Select session</option>
-                  <option value="New York">New York</option>
-                  <option value="London">London</option>
-                  <option value="Asia">Asia</option>
-                </select>
-              </div>
-
-              <div className="md:col-span-2">
                 <label htmlFor="strategyTag" className="block text-sm font-medium text-gray-300 mb-2">
                   Strategy Tag
                 </label>
