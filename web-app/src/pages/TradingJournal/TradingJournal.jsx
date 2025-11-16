@@ -31,8 +31,8 @@ export default function TradingJournal() {
           <TradingDayPerformancePanel key={`performance-${refreshKey}`} />
           <ProfitabilityPanel key={`profitability-${refreshKey}`} />
           <MostTradedInstrumentsPanel key={`instruments-${refreshKey}`} />
-          <TradeLogsPanel key={`logs-${refreshKey}`} />
-          <RecentTradesPanel key={`recent-${refreshKey}`} />
+          <TradeLogsPanel key={`logs-${refreshKey}`} refreshKey={refreshKey} />
+          <RecentTradesPanel key={`recent-${refreshKey}`} refreshKey={refreshKey} />
         </div>
       </div>
     </div>

@@ -1,24 +1,25 @@
 import { useState, useEffect } from 'react';
 import { tradeAPI } from '../../../services/api';
 
-export default function RecentTradesPanel() {
+export default function RecentTradesPanel({ refreshKey }) {
   const [trades, setTrades] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchTrades();
-  }, []);
+  }, [refreshKey]);
 
   const fetchTrades = async () => {
     try {
       setLoading(true);
-      const data = await tradeAPI.getAll();
-      const recentTrades = data.slice(0, 10);
+      const { data } = await tradeAPI.getAll();
+      const recentTrades = (data || []).slice(0, 10);
       setTrades(recentTrades);
     } catch (err) {
       console.error('Failed to fetch trades:', err);
       setError('Failed to load recent trades');
+      setTrades([]);
     } finally {
       setLoading(false);
     }

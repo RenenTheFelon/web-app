@@ -1,23 +1,24 @@
 import { useState, useEffect } from 'react';
 import { tradeAPI } from '../../../services/api';
 
-export default function TradeLogsPanel() {
+export default function TradeLogsPanel({ refreshKey }) {
   const [trades, setTrades] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchTrades();
-  }, []);
+  }, [refreshKey]);
 
   const fetchTrades = async () => {
     try {
       setLoading(true);
-      const data = await tradeAPI.getAll();
-      setTrades(data);
+      const { data } = await tradeAPI.getAll();
+      setTrades(data || []);
     } catch (err) {
       console.error('Failed to fetch trades:', err);
       setError('Failed to load trade logs');
+      setTrades([]);
     } finally {
       setLoading(false);
     }
