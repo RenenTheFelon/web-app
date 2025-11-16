@@ -38,15 +38,20 @@ WealthWise is a full-stack application utilizing a React frontend and a Spring B
     3.  **Spending Analytics Dashboard**: Category-based spending breakdown with time range filtering and visualization.
     4.  **Goal Planner**: Tracks financial goals with progress bars and status management.
     5.  **Net Worth Tracker**: Manages assets/liabilities and calculates historical net worth. Features 12-month projection visualization using monthly balance carryover data - accurately accumulates monthly deltas (closing - opening) to project future net worth based on recurring income/expenses.
+- **Trading Journal**: Comprehensive trading performance analysis dashboard for manual trade tracking:
+    - **Manual Trade Entry**: Collapsible form for recording trades with all essential fields (asset, order type, entry/exit prices, P/L, timestamps, duration, session, strategy tags). Auto-calculates trade duration from open/close times.
+    - **Behavioral Bias Panel**: Visual representation of trading bias (bull vs. bear) with horizontal progress bar showing BUY vs. SELL order distribution. Displays "Rather Bull", "Rather Bear", or "Neutral" based on trade ratios.
+    - **Trading Day Performance Panel**: 7-day bar chart showing daily profit/loss for the current week (Sunday-Saturday). Green bars for profits, red for losses, with "Best Day" indicator showing highest profit day.
+    - **Profitability Panel**: Circular donut chart displaying win rate percentage with detailed statistics (total trades, winning/losing trades, total profit/loss, net P/L). Color-coded green for profits, red for losses.
+    - **Most Traded Instruments Panel**: Top 3 most-traded assets with horizontal bars showing win/loss breakdown for each instrument.
 
 **System Design Choices:**
-- **Database Schema**: PostgreSQL database with tables for users, categories, income, expenses, recurring transactions, budgets, goals, net worth, and monthly_balances. All tables are linked to the `users` table via foreign keys for data isolation.
-- **API Design**: RESTful API endpoints for all core functionalities, prefixed with `/api`. Monthly balance endpoints:
-    - `GET /api/monthly-balance/{year}/{month}` - Get or calculate monthly balance
-    - `GET /api/monthly-balance/{year}/{month}/projected` - Get projected balance including recurring transactions
-    - `POST /api/monthly-balance/{year}/{month}/recalculate` - Force recalculation of monthly balance
+- **Database Schema**: PostgreSQL database with tables for users, categories, income, expenses, recurring transactions, budgets, goals, net worth, monthly_balances, and trades. All tables are linked to the `users` table via foreign keys for data isolation.
+- **API Design**: RESTful API endpoints for all core functionalities, prefixed with `/api`. Key endpoints include:
+    - Monthly balance: `GET /api/monthly-balance/{year}/{month}`, `GET /api/monthly-balance/{year}/{month}/projected`, `POST /api/monthly-balance/{year}/{month}/recalculate`
+    - Trading journal: `GET/POST/PUT/DELETE /api/trades`, `GET /api/trades/analytics/behavioral-bias`, `GET /api/trades/analytics/profitability`, `GET /api/trades/analytics/most-traded`, `GET /api/trades/analytics/trading-day-performance`
 - **Project Structure**: Organized into `web-app/` (React Frontend) and `backend/` (Spring Boot Backend) directories.
-- **Backend Architecture**: 10 JPA repositories managing data persistence including MonthlyBalanceRepository for month-to-month carryover tracking.
+- **Backend Architecture**: 11 JPA repositories managing data persistence including MonthlyBalanceRepository for month-to-month carryover tracking and TradeRepository for trading journal analytics.
 
 ## External Dependencies
 - **Database**: PostgreSQL (Neon-hosted).

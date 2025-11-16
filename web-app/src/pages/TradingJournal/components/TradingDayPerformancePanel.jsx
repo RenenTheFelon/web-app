@@ -53,19 +53,34 @@ export default function TradingDayPerformancePanel() {
   };
 
   const getBestDay = () => {
-    if (!data || !Array.isArray(data) || data.length === 0) return null;
+    if (!data || typeof data !== 'object') return null;
     
-    const bestDay = data.reduce((best, current) => {
-      return (current.profitLoss > best.profitLoss) ? current : best;
-    }, data[0]);
+    const { startDate } = getWeekDates();
+    const weekStart = new Date(startDate);
     
-    return bestDay.profitLoss > 0 ? getDayName(bestDay.dayOfWeek) : null;
+    let maxProfit = 0;
+    let bestDayNum = null;
+    
+    for (let i = 0; i < 7; i++) {
+      const currentDate = new Date(weekStart);
+      currentDate.setDate(weekStart.getDate() + i);
+      const dateKey = currentDate.toISOString().split('T')[0];
+      const profitLoss = parseFloat(data[dateKey] || 0);
+      
+      if (profitLoss > maxProfit) {
+        maxProfit = profitLoss;
+        bestDayNum = i;
+      }
+    }
+    
+    return bestDayNum !== null && maxProfit > 0 ? getDayName(bestDayNum) : null;
   };
 
   const getMaxAbsoluteValue = () => {
-    if (!data || !Array.isArray(data) || data.length === 0) return 1;
+    if (!data || typeof data !== 'object') return 1;
     
-    const maxValue = Math.max(...data.map(d => Math.abs(d.profitLoss)));
+    const values = Object.values(data).map(v => Math.abs(parseFloat(v)));
+    const maxValue = Math.max(...values);
     return maxValue > 0 ? maxValue : 1;
   };
 
@@ -105,12 +120,18 @@ export default function TradingDayPerformancePanel() {
   }
 
   const bestDay = getBestDay();
+  const { startDate } = getWeekDates();
+  const weekStart = new Date(startDate);
 
   const allDaysData = [0, 1, 2, 3, 4, 5, 6].map(dayNum => {
-    const dayData = data?.find(d => d.dayOfWeek === dayNum);
+    const currentDate = new Date(weekStart);
+    currentDate.setDate(weekStart.getDate() + dayNum);
+    const dateKey = currentDate.toISOString().split('T')[0];
+    const profitLoss = parseFloat(data?.[dateKey] || 0);
+    
     return {
       dayOfWeek: dayNum,
-      profitLoss: dayData?.profitLoss || 0
+      profitLoss: profitLoss
     };
   });
 
